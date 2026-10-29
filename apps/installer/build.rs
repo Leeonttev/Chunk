@@ -9,7 +9,7 @@ fn main() {
     let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
     let payload = env::var("CHUNK_PAYLOAD")
         .map(PathBuf::from)
-        .unwrap_or_else(|_| manifest.join("../../target/release/LeMine.exe"));
+        .unwrap_or_else(|_| manifest.join("../../target/release/Chunk.exe"));
     println!("cargo:rerun-if-env-changed=CHUNK_PAYLOAD");
     println!("cargo:rerun-if-changed={}", payload.display());
 
@@ -32,7 +32,7 @@ fn main() {
     };
     println!("cargo:rustc-env=CHUNK_PAYLOAD_SIZE={size}");
 
-    let package = manifest.join("../lemine/package.json");
+    let package = manifest.join("../chunk/package.json");
     println!("cargo:rerun-if-changed={}", package.display());
     let version = fs::read_to_string(&package)
         .ok()

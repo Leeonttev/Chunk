@@ -1,6 +1,6 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     theseus::export_app_event_bindings(
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../../apps/lemine/src/generated/app-events"),
+            .join("../../apps/chunk/src/generated/app-events"),
     )
 }

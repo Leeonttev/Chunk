@@ -12,7 +12,7 @@ import { join } from 'node:path'
 
 const REPO = 'Leeonttev/Chunk'
 const root = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')
-const version = JSON.parse(readFileSync(join(root, 'apps/lemine/package.json'), 'utf8')).version
+const version = JSON.parse(readFileSync(join(root, 'apps/chunk/package.json'), 'utf8')).version
 const notes = process.argv[2] ?? `Chunk ${version}`
 const keyPath = process.env.CHUNK_SIGNING_KEY ?? join(homedir(), '.chunk', 'updater.key')
 

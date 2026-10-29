@@ -57,14 +57,14 @@ Thumbs.db
 .turbo
 target
 generated
-!apps/lemine/src/generated/
-!apps/lemine/src/generated/app-events/
-!apps/lemine/src/generated/app-events/*.ts
-!apps/lemine/src/generated/app-events/README.md
-!apps/lemine/src/generated/app-events/postcard/
-!apps/lemine/src/generated/app-events/postcard/index.d.ts
-!apps/lemine/src/generated/app-events/postcard/index.js
-!apps/lemine/src/generated/app-events/postcard/package.json
+!apps/chunk/src/generated/
+!apps/chunk/src/generated/app-events/
+!apps/chunk/src/generated/app-events/*.ts
+!apps/chunk/src/generated/app-events/README.md
+!apps/chunk/src/generated/app-events/postcard/
+!apps/chunk/src/generated/app-events/postcard/index.d.ts
+!apps/chunk/src/generated/app-events/postcard/index.js
+!apps/chunk/src/generated/app-events/postcard/package.json
 .env
 .env.*
 !.env.example
@@ -90,3 +90,10 @@ storybook-static
 
 
 references/
+
+# Notes for AI assistants stay on the developer's machine
+AGENTS.md
+CLAUDE.md
+
+# Tauri regenerates these schemas on every build
+apps/*/gen/schemas/

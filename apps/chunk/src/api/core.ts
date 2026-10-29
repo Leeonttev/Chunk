@@ -34,7 +34,7 @@ export interface Instance {
 	link?: InstanceLink | null
 }
 
-/** Where an instance came from; only `modrinth_modpack` is used by LeMine, the rest pass through. */
+/** Where an instance came from; only `modrinth_modpack` is used by Chunk, the rest pass through. */
 export type InstanceLink =
 	| { type: 'modrinth_modpack'; project_id: string; version_id: string }
 	| {
@@ -63,7 +63,7 @@ export interface ContentItem {
 	owner: { name: string } | null
 	has_update: boolean
 	update_version_id?: string | null
-	/** Set by LeMine: the file came with the Modrinth modpack rather than being added by the user. */
+	/** Set by Chunk: the file came with the Modrinth modpack rather than being added by the user. */
 	from_pack?: boolean
 }
 

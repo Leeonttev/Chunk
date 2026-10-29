@@ -1,9 +1,9 @@
 {
 	"$schema": "https://schema.tauri.app/config/2",
 	"build": {
-		"beforeDevCommand": "pnpm --filter @lemine/app dev",
-		"beforeBuildCommand": "pnpm --filter @lemine/app build",
-		"frontendDist": "../lemine/dist",
+		"beforeDevCommand": "pnpm --filter @chunk/ui dev",
+		"beforeBuildCommand": "pnpm --filter @chunk/ui build",
+		"frontendDist": "../chunk/dist",
 		"devUrl": "http://localhost:1420"
 	},
 	"bundle": {
@@ -53,8 +53,8 @@
 		"createUpdaterArtifacts": true
 	},
 	"productName": "Chunk",
-	"version": "../lemine/package.json",
-	"mainBinaryName": "LeMine",
+	"version": "../chunk/package.json",
+	"mainBinaryName": "Chunk",
 	"identifier": "LeMine",
 	"plugins": {
 		"deep-link": {

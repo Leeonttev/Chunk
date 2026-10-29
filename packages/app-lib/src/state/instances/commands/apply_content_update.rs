@@ -603,7 +603,7 @@ async fn bulk_updateable_project_paths(
         state,
     )
     .await?;
-    // LeMine treats an installed modpack as the user's own instance, so the pack's files are updatable too.
+    // Chunk treats an installed modpack as the user's own instance, so the pack's files are updatable too.
     items.extend(
         super::list_content::list_linked_modpack_content(
             instance_id,

@@ -13,7 +13,9 @@ use std::process::Command;
 use tauri::{AppHandle, Emitter, Manager};
 
 const PRODUCT: &str = "Chunk";
-const BINARY: &str = "LeMine.exe";
+const BINARY: &str = "Chunk.exe";
+/// Name the launcher binary had before 0.1.1; removed when installing over an old copy.
+const LEGACY_BINARY: &str = "LeMine.exe";
 const PUBLISHER: &str = "leeonttev";
 /// Folder name the launcher keeps instances, accounts and caches under.
 const DATA_ID: &str = "LeMine";
@@ -90,10 +92,12 @@ fn hidden(command: &mut Command) -> &mut Command {
 }
 
 fn launcher_running() -> bool {
-    hidden(Command::new("tasklist").args(["/FI", &format!("IMAGENAME eq {BINARY}"), "/NH"]))
-        .output()
-        .map(|output| String::from_utf8_lossy(&output.stdout).contains(BINARY))
-        .unwrap_or(false)
+    [BINARY, LEGACY_BINARY].iter().any(|name| {
+        hidden(Command::new("tasklist").args(["/FI", &format!("IMAGENAME eq {name}"), "/NH"]))
+            .output()
+            .map(|output| String::from_utf8_lossy(&output.stdout).contains(name))
+            .unwrap_or(false)
+    })
 }
 
 fn create_shortcut(link: &Path, target: &Path) -> Result<(), String> {
@@ -171,6 +175,7 @@ fn do_install(app: &AppHandle, desktop: bool) -> Result<(), String> {
             .map_err(|_| "Не удалось заменить старую версию. Закройте Chunk и повторите.".to_string())?;
     }
     fs::rename(&temp, &target).map_err(|error| error.to_string())?;
+    let _ = fs::remove_file(dir.join(LEGACY_BINARY));
 
     emit(app, 88.0, "Добавляем удаление в Windows");
     let me = std::env::current_exe().map_err(|error| error.to_string())?;

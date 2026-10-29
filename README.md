@@ -58,12 +58,12 @@ pnpm app:dev
 
 | Часть                     | Папка               |
 | ------------------------- | ------------------- |
-| Интерфейс лаунчера (Vue)  | `apps/lemine`       |
+| Интерфейс лаунчера (Vue)  | `apps/chunk`        |
 | Оболочка приложения       | `apps/app`          |
 | Ядро (Rust)               | `packages/app-lib`  |
 | Установщик                | `apps/installer`    |
 
-Выпуск новой версии: поднимите версию в `apps/lemine/package.json` и запустите
+Выпуск новой версии: поднимите версию в `apps/chunk/package.json` и запустите
 
 ```bash
 node scripts/release-chunk.mjs "Что нового в этой версии"
