@@ -1129,3 +1129,11 @@ LeMine — личный некоммерческий лаунчер Minecraft д
 - Удалены картинки Modrinth из `.github/assets/` (все `*_cover*.png`, `social_preview.png`) и локальный `.idea/icon.svg` (в git не отслеживался). Из README пакетов Modrinth (`apps/frontend`, `apps/labrinth`, `apps/docs`, `apps/daedalus_client`, `packages/api-client`, `packages/daedalus`, `packages/ui`) убраны блоки `<picture>` со ссылками на эти картинки. `apps/app/README.md` переписан коротко на русском.
 - Не сделано: превью репозитория в соцсетях (Social preview) задаётся в настройках репозитория на GitHub вручную. Можно загрузить `chunk-banner.png`.
 - Баннер исправлен: белые уголки появлялись из-за белого фона при снимке. PNG теперь снимается с `--default-background-color=00000000`, углы прозрачные. Логотип и текст сдвинуты в центр (`translate(282 92)`, текст `x=500/506`).
+
+### 2026-10-29 — Первый выпуск v0.1.0 и чистая история коммитов
+- По просьбе пользователя из всех коммитов после `e8472d4` убрана строка `Co-Authored-By: Claude` (`git filter-branch --msg-filter`). Авторство, даты и содержимое не изменились. История отправлена с `--force-with-lease`, новый `main` — `d235af0`. **Правило: в коммитах и PR этого репозитория не указывать Claude соавтором** (сохранено и в памяти).
+- Установлен GitHub CLI (`C:\Program Files\GitHub CLI\gh.exe`, winget `GitHub.cli`), пользователь вошёл как `Leeonttev` (scope `repo`).
+- `node scripts/release-chunk.mjs "Первый выпуск Chunk"` отработал (~10 минут, ядро уже было частично собрано) → `dist/release-0.1.0/`: `Chunk-Setup-0.1.0.exe` (19,2 МБ), `Chunk_0.1.0_x64-setup.exe` (15,4 МБ), `.sig`, `latest.json`.
+- Выпуск: `gh release create v0.1.0 --latest …` → https://github.com/Leeonttev/Chunk/releases/tag/v0.1.0 (описание на русском, `dist/notes-0.1.0.md`). Проверено: `releases/latest/download/latest.json` отдаёт 200, пакет обновления скачивается (15 391 083 байт).
+- Следующий выпуск: поднять `version` в `apps/lemine/package.json` → `node scripts/release-chunk.mjs "что нового"` → `gh release create v<версия> --latest` со всеми файлами из `dist/release-<версия>/`.
+- Красный ✕ на коммитах на GitHub — это упавшие CI-воркфлоу Modrinth из `.github/workflows` (сайт, labrinth и т. д.). Пока не трогали.
