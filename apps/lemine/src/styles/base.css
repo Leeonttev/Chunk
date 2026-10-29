@@ -1,0 +1,190 @@
+@import '@fontsource-variable/onest';
+@import '@fontsource/pixelify-sans/700.css';
+@import '@fontsource-variable/montserrat';
+
+:root {
+	color-scheme: dark;
+
+	--bg: #171b1e;
+	--surface-1: #20262a;
+	--surface-2: #293136;
+	--surface-3: #343e44;
+	--surface-4: #465159;
+	--chrome-bg: #121719;
+	--border: transparent;
+	--glass: rgba(255, 255, 255, 0.1);
+	--glass-strong: rgba(255, 255, 255, 0.16);
+	--overlay: rgba(0, 0, 0, 0.6);
+
+	--text: #ffffff;
+	--text-2: #c6ced3;
+	--text-3: #8e9ba4;
+
+	--accent: #24cf78;
+	--accent-hover: #42df90;
+	--accent-soft: rgba(36, 207, 120, 0.14);
+	--accent-text: #6ce6a4;
+	--amethyst: #b591f5;
+	--amethyst-light: #e7d4ff;
+	--on-accent: #082316;
+
+	--danger: #ff6b6b;
+	--danger-soft: rgba(255, 107, 107, 0.14);
+	--success: #4ade80;
+
+	--radius-sm: 6px;
+	--radius-md: 10px;
+	--radius-lg: 12px;
+	--radius-xl: 14px;
+
+	--titlebar-height: 38px;
+	/** The window frame is equally thick on every side; the top part holds the logo and window buttons. */
+	--frame-size: var(--titlebar-height);
+	/** Breathing room scrollable pages keep below their last row. */
+	--nav-clearance: 32px;
+	/** Shared surface for popovers and the scene launch bar. */
+	--panel: rgba(32, 38, 42, 0.96);
+	/** Page padding beneath the separate, non-overlapping window toolbar. */
+	--titlebar-clearance: 20px;
+	/** Content spacing inside the sidebar shell. */
+	--page-gutter: 28px;
+	--nav-rail-width: 214px;
+	--font: 'Onest Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	--font-heading: var(--font);
+	--font-pixel: 'Pixelify Sans', var(--font);
+	--ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	height: 100%;
+	overflow: hidden;
+	background: var(--bg);
+	color: var(--text);
+	font-family: var(--font);
+	font-size: 14px;
+	line-height: 1.45;
+	-webkit-font-smoothing: antialiased;
+	user-select: none;
+}
+
+#app {
+	height: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+	font: inherit;
+	color: inherit;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p {
+	margin: 0;
+}
+
+h1,
+h2,
+h3 {
+	font-family: var(--font-heading);
+	font-weight: 800;
+	letter-spacing: -0.02em;
+}
+
+img {
+	-webkit-user-drag: none;
+}
+
+::selection {
+	background: var(--accent-soft);
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--surface-4);
+	border: 3px solid transparent;
+	border-radius: 999px;
+	background-clip: padding-box;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+:focus,
+:focus-visible {
+	outline: none;
+}
+
+.muted {
+	color: var(--text-2);
+}
+
+.faint {
+	color: var(--text-3);
+}
+
+.eyebrow {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--text-3);
+}
+
+.selectable {
+	user-select: text;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+.tooltip {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 50000;
+	max-width: 280px;
+	padding: 6px 10px;
+	border-radius: 8px;
+	background: var(--surface-3);
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+	color: var(--text);
+	font-family: var(--font);
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 1.35;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.12s var(--ease);
+}
+
+.tooltip--visible {
+	opacity: 1;
+}

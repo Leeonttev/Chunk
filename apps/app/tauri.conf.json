@@ -1,0 +1,125 @@
+{
+	"$schema": "https://schema.tauri.app/config/2",
+	"build": {
+		"beforeDevCommand": "pnpm --filter @lemine/app dev",
+		"beforeBuildCommand": "pnpm --filter @lemine/app build",
+		"frontendDist": "../lemine/dist",
+		"devUrl": "http://localhost:1420"
+	},
+	"bundle": {
+		"active": true,
+		"category": "Game",
+		"copyright": "",
+		"targets": "all",
+		"externalBin": [],
+		"icon": [
+			"icons/128x128.png",
+			"icons/128x128@2x.png",
+			"icons/icon.icns",
+			"icons/icon.ico"
+		],
+		"windows": {
+			"nsis": {
+				"installMode": "currentUser",
+				"languages": [
+					"Russian"
+				],
+				"installerHooks": "./nsis/hooks.nsi"
+			}
+		},
+		"longDescription": "",
+		"macOS": {
+			"entitlements": "App.entitlements",
+			"exceptionDomain": "",
+			"frameworks": [],
+			"providerShortName": null,
+			"signingIdentity": null,
+			"dmg": {
+				"background": "./dmg/dmg-background.png",
+				"windowSize": {
+					"width": 661,
+					"height": 432
+				},
+				"appPosition": {
+					"x": 188,
+					"y": 212
+				},
+				"applicationFolderPosition": {
+					"x": 475,
+					"y": 212
+				}
+			}
+		},
+		"shortDescription": "",
+		"linux": {
+			"deb": {
+				"depends": []
+			}
+		}
+	},
+	"productName": "Chunk",
+	"version": "../lemine/package.json",
+	"mainBinaryName": "LeMine",
+	"identifier": "LeMine",
+	"plugins": {
+		"deep-link": {
+			"desktop": {
+				"schemes": [
+					"modrinth"
+				]
+			},
+			"mobile": []
+		}
+	},
+	"app": {
+		"withGlobalTauri": false,
+		"macOSPrivateApi": true,
+		"windows": [
+			{
+				"titleBarStyle": "Overlay",
+				"hiddenTitle": true,
+				"fullscreen": false,
+				"height": 800,
+				"resizable": true,
+				"title": "Chunk",
+				"label": "main",
+				"width": 1280,
+				"minHeight": 700,
+				"minWidth": 1100,
+				"visible": false,
+				"zoomHotkeysEnabled": false,
+				"decorations": false
+			}
+		],
+		"security": {
+			"assetProtocol": {
+				"scope": [
+					"$APPDATA/caches/icons/*",
+					"$APPCONFIG/caches/icons/*",
+					"$CONFIG/caches/icons/*",
+					"$APPDATA/profiles/*/saves/*/icon.png",
+					"$APPCONFIG/profiles/*/saves/*/icon.png",
+					"$CONFIG/profiles/*/saves/*/icon.png"
+				],
+				"enable": true
+			},
+			"capabilities": [
+				"core",
+				"plugins"
+			],
+			"csp": {
+				"default-src": "'self' customprotocol: asset:",
+				"connect-src": "ipc: http://ipc.localhost https://modrinth.com https://*.modrinth.com https://api.mclo.gs http://textures.minecraft.net https://textures.minecraft.net 'self' data: blob:",
+				"font-src": [
+					"'self'",
+					"data:"
+				],
+				"img-src": "https: 'unsafe-inline' 'self' asset: http://asset.localhost http://textures.minecraft.net blob: data:",
+				"style-src": "'unsafe-inline' 'self'",
+				"script-src": "'self'",
+				"frame-src": "https://www.youtube.com https://www.youtube-nocookie.com 'self'",
+				"media-src": "https://*.githubusercontent.com"
+			}
+		}
+	}
+}
