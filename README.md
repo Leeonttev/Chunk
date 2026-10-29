@@ -1,49 +1,78 @@
-<picture>
-	<source media="(prefers-color-scheme: light)" srcset=".github/assets/monorepo_cover_light.png">
-	<img alt="Modrinth Monorepo Cover" src=".github/assets/monorepo_cover.png">
-</picture>
+<p align="center">
+	<img alt="Chunk — лаунчер Minecraft" src=".github/assets/chunk-banner.png">
+</p>
 
-![Issues](https://img.shields.io/github/issues-raw/Modrinth/code?color=c78aff&label=issues&style=for-the-badge)
-![Pull Requests](https://img.shields.io/github/issues-pr-raw/Modrinth/code?color=c78aff&label=PRs&style=for-the-badge)
-![Contributors](https://img.shields.io/github/contributors/Modrinth/code?color=c78aff&label=contributors&style=for-the-badge)
-![Lines of Code](https://img.shields.io/endpoint?url=https://loctopus.creeperkatze.dev/github/modrinth/code/badge?style=flat&logoColor=white&color=c78aff&style=for-the-badge)
-![Commit Activity](https://img.shields.io/github/commit-activity/m/Modrinth/code?color=c78aff&label=commits&style=for-the-badge)
-![Last Commit](https://img.shields.io/github/last-commit/Modrinth/code?color=c78aff&label=last%20commit&style=for-the-badge)
+<p align="center">
+	<a href="https://github.com/Leeonttev/Chunk/releases/latest"><img alt="Последняя версия" src="https://img.shields.io/github/v/release/Leeonttev/Chunk?color=24cf78&label=%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F&style=for-the-badge"></a>
+	<a href="https://github.com/Leeonttev/Chunk/releases"><img alt="Скачивания" src="https://img.shields.io/github/downloads/Leeonttev/Chunk/total?color=24cf78&label=%D1%81%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F&style=for-the-badge"></a>
+	<img alt="Windows" src="https://img.shields.io/badge/Windows-10%20%2F%2011-20262a?style=for-the-badge">
+	<a href="COPYING.md"><img alt="Лицензия GPL-3.0" src="https://img.shields.io/badge/%D0%BB%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F-GPL--3.0-20262a?style=for-the-badge"></a>
+</p>
 
-## Modrinth Monorepo
+<p align="center">
+	<b>Chunk</b> — быстрый и красивый лаунчер Minecraft на русском языке.<br>
+	Моды, шейдеры, ресурспаки и готовые сборки с Modrinth в пару кликов. Без рекламы и слежки.
+</p>
 
-Welcome to the Modrinth Monorepo, the primary codebase for the Modrinth website, app, API and documentation. It contains ![Lines of code](https://img.shields.io/endpoint?url=https://loctopus.creeperkatze.dev/github/modrinth/code/badge%3Fformat%3Dhuman&logoColor=white&color=black&label=) lines of code and has ![Contributors](https://img.shields.io/github/contributors/Modrinth/code?color=black&label=) contributors!
+<p align="center">
+	<a href="https://github.com/Leeonttev/Chunk/releases/latest"><b>⬇ Скачать Chunk для Windows</b></a>
+</p>
 
-If you're not a developer and you've stumbled upon this repository, you can access the web interface on the [Modrinth website](https://modrinth.com) and download the latest release of the app [here](https://modrinth.com/app).
+---
 
-## Development
+## Возможности
 
-This repository contains several projects. For detailed development information, please refer to their respective guides:
+- **Каталог Modrinth внутри лаунчера.** Моды, ресурспаки, шейдеры и целые сборки: поиск, фильтры по версии и загрузчику, установка одной кнопкой.
+- **Чужие сборки становятся вашими.** Ставите сборку автора и меняете в ней что угодно, а когда автор выпустит обновление — обновляетесь, не теряя своих модов.
+- **Автофикс.** Если после обновления модов игра не запускается, Chunk найдёт причину и предложит исправление: обновить Fabric/Quilt Loader, поставить нужную Java или выключить мешающие моды. Ничего не меняется без вашего согласия.
+- **Обновление модов пачкой.** «Обновить всё» одной операцией, с прогрессом и возможностью отменить.
+- **Вход без лицензии и через Microsoft.** Играйте по нику или с аккаунтом Microsoft, несколько аккаунтов одновременно.
+- **Гардероб.** Свои скины, примерка в 3D, классическая и тонкая модель рук.
+- **Скриншоты всех сборок в одном месте** с просмотром в полном качестве.
+- **Статус в Discord** — друзья видят, во что вы играете.
+- **Сам обновляется.** Новые версии Chunk приходят автоматически.
 
-| Project       | Directory              | Guide                                                     |
-| ------------- | ---------------------- | --------------------------------------------------------- |
-| Website       | `apps/frontend`        | [Guide](https://docs.modrinth.com/contributing/knossos/)  |
-| App           | `apps/app`             | [Guide](https://docs.modrinth.com/contributing/theseus/)  |
-| API           | `apps/labrinth`        | [Guide](https://docs.modrinth.com/contributing/labrinth/) |
-| Meta          | `apps/daedalus_client` | [Guide](https://docs.modrinth.com/contributing/daedalus/) |
-| Documentation | `apps/docs`            | [Guide](https://docs.modrinth.com/contributing/docs/)     |
+## Скриншоты
 
-Shared libraries live in `packages/`.
+<p align="center">
+	<img alt="Библиотека сборок" src=".github/assets/screenshot-library.png" width="49%">
+	<img alt="Управление сборкой" src=".github/assets/screenshot-instance.png" width="49%">
+</p>
 
-## Contributing
+## Установка
 
-We welcome contributions! Before submitting any contributions, please read our [contributing guidelines](https://docs.modrinth.com/contributing/getting-started/).
+1. Скачайте **Chunk-Setup-…exe** со страницы [последнего выпуска](https://github.com/Leeonttev/Chunk/releases/latest).
+2. Запустите файл и нажмите «Установить».
+3. Если Windows покажет «Windows защитила ваш компьютер», нажмите **«Подробнее» → «Выполнить в любом случае»**. Это предупреждение появляется у всех программ без платной цифровой подписи.
 
-If you plan to fork this repository for your own purposes, please review our [copying guidelines](COPYING.md).
+Права администратора не нужны. Удалить Chunk можно через «Параметры → Приложения».
 
-## Security
+## Для разработчиков
 
-If you discover a security vulnerability within our codebase, please follow our [responsible disclosure guidelines](https://modrinth.com/legal/security).
+Нужны [Node.js](https://nodejs.org/), [pnpm](https://pnpm.io/), [Rust](https://www.rust-lang.org/tools/install) и [зависимости Tauri](https://v2.tauri.app/start/prerequisites/).
 
-## Support
+```bash
+pnpm install
+pnpm app:dev
+```
 
-If you need help with the Modrinth web interface or app, please visit our [support page](https://support.modrinth.com). For general inquiries, you can also join our [Discord server](https://discord.modrinth.com).
+| Часть                     | Папка               |
+| ------------------------- | ------------------- |
+| Интерфейс лаунчера (Vue)  | `apps/lemine`       |
+| Оболочка приложения       | `apps/app`          |
+| Ядро (Rust)               | `packages/app-lib`  |
+| Установщик                | `apps/installer`    |
 
-## License
+Выпуск новой версии: поднимите версию в `apps/lemine/package.json` и запустите
 
-All packages in this repository are licensed under their respective licenses. See the [copying guidelines](COPYING.md) for details, including restrictions on Modrinth branding.
+```bash
+node scripts/release-chunk.mjs "Что нового в этой версии"
+```
+
+Скрипт соберёт подписанное обновление и установщик в `dist/release-<версия>/` — эти файлы загружаются в новый выпуск на GitHub.
+
+## Лицензия и благодарности
+
+Chunk основан на открытом исходном коде [Modrinth App](https://github.com/modrinth/code) и распространяется на условиях **GNU GPL-3.0**. Подробности — в [COPYING.md](COPYING.md).
+
+Chunk — независимый проект и не связан с Modrinth и Rinth, Inc. Каталог модов предоставляется сервисом [Modrinth](https://modrinth.com). Minecraft — товарный знак Mojang Studios; Chunk не связан с Mojang и Microsoft.

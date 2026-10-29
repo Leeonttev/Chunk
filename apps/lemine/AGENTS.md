@@ -1117,3 +1117,14 @@ LeMine — личный некоммерческий лаунчер Minecraft д
 - Лаунчер ищет `https://github.com/Leeonttev/Chunk/releases/latest/download/latest.json`, поэтому выпуск должен быть «latest» (не черновик, не pre-release), с тегом `v<версия>`. Репозиторий публичный.
 - Файлы: `apps/app/tauri.conf.json`, `scripts/release-chunk.mjs`, `AGENTS.md`.
 - Коммит `f1c6184` отправлен в `origin/main` (github.com/Leeonttev/Chunk). Вместе с ним ушли автоматически созданные схемы `apps/installer/gen/schemas/*` — это нормально, их генерирует `tauri-build` (как `apps/app/gen`).
+
+### 2026-10-29 — Русская страница проекта на GitHub без брендинга Modrinth
+- `README.md` переписан на русском под Chunk:
+  - баннер `.github/assets/chunk-banner.png`. Исходник — `chunk-banner.svg`, PNG снят Chrome headless, чтобы шрифт на GitHub был тем же;
+  - значки (версия, скачивания, Windows, GPL-3.0), ссылка на скачивание и список возможностей;
+  - скриншоты `.github/assets/screenshot-library.png` и `screenshot-instance.png` — снимки окна пользователя, на них виден его ник;
+  - инструкция по установке (SmartScreen), раздел для разработчиков со скриптом выпуска;
+  - лицензия и благодарности: основан на Modrinth App, GPL-3.0, не связан с Modrinth / Rinth, Inc. и Mojang.
+- `COPYING.md` — на русском: лицензии пакетов, GPL-3.0 для лаунчера, торговые знаки. Брендинг Modrinth удалён, как требуют их правила для форков.
+- Удалены картинки Modrinth из `.github/assets/` (все `*_cover*.png`, `social_preview.png`) и локальный `.idea/icon.svg` (в git не отслеживался). Из README пакетов Modrinth (`apps/frontend`, `apps/labrinth`, `apps/docs`, `apps/daedalus_client`, `packages/api-client`, `packages/daedalus`, `packages/ui`) убраны блоки `<picture>` со ссылками на эти картинки. `apps/app/README.md` переписан коротко на русском.
+- Не сделано: превью репозитория в соцсетях (Social preview) задаётся в настройках репозитория на GitHub вручную. Можно загрузить `chunk-banner.png`.

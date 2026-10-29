@@ -1,18 +1,14 @@
-# Copying Guidelines
+# Лицензии и использование кода
 
-All packages in this repository are licensed under their respective licenses. For more information, refer to the LICENSE file in each package.
+Chunk создан на основе открытого исходного кода [Modrinth App](https://github.com/modrinth/code). Каждая часть репозитория распространяется по своей лицензии — смотрите файлы `LICENSE`, `LICENSE.txt` или `COPYING.md` в папке нужного пакета.
 
-For detailed information, consult each package's COPYING.md, LICENSE.txt, or LICENSE file, if available.
+- Лаунчер (`apps/app`, `apps/lemine`, `apps/installer`) и его ядро (`packages/app-lib`) — **GNU General Public License версии 3** ([текст лицензии](apps/app/LICENSE)). Вы можете свободно использовать, изучать, изменять и распространять этот код, если ваша версия тоже остаётся открытой под GPL-3.0 и сохраняет указание авторства.
+- Остальные пакеты унаследованы от Modrinth и сохраняют свои исходные лицензии.
 
-## Modrinth Branding
+## Торговые знаки
 
-The use of Modrinth branding elements, including but not limited to the wrench-in-labyrinth logo, the landing image, and any variations thereof, is strictly prohibited without explicit written permission from Rinth, Inc. This includes trademarks, logos, or other branding elements.
+Название «Modrinth», логотип с гаечным ключом в лабиринте и другие элементы бренда Modrinth принадлежат Rinth, Inc. и в Chunk не используются: все такие файлы удалены из этого репозитория, как того требуют правила Modrinth для форков. Chunk не связан с Rinth, Inc.
 
-> All rights reserved. © 2020-2026 Rinth, Inc.
+Название и логотип **Chunk** относятся к этому проекту. Если вы делаете свою версию на основе этого кода, пожалуйста, дайте ей другое название и логотип.
 
-This includes, but may not be limited to, the following files or directories:
-
-- .idea/icon.svg
-- .github/assets/
-
-If you fork this repository, you must remove all Modrinth branding assets from your fork.
+Minecraft — товарный знак Mojang Studios. Chunk не является официальным продуктом Minecraft и не связан с Mojang и Microsoft.
