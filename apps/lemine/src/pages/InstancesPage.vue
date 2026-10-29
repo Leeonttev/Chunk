@@ -241,7 +241,7 @@ function finishPointerDrag(event: PointerEvent) {
 					:class="{ 'section__collapse--collapsed': collapsedGroups.includes(section.id) }"
 				>
 					<div class="section__inner">
-						<div class="grid">
+						<div class="grid stagger">
 							<article
 								v-for="instance in section.instances"
 								:key="instance.id"

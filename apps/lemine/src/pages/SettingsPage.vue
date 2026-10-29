@@ -24,12 +24,14 @@ import { autofixEnabled } from '@/composables/autofix'
 import { useStore } from '@/composables/store'
 import { reportError } from '@/composables/toasts'
 import { addAccountOpen } from '@/composables/ui-state'
+import { useUpdater } from '@/composables/updater'
 
 import authorMark from '../../../../branding/Vector.svg'
 
 import packageInfo from '../../package.json'
 import AccountAvatar from '@/components/AccountAvatar.vue'
 import AppLogo from '@/components/AppLogo.vue'
+import UiButton from '@/components/ui/UiButton.vue'
 import UiSlider from '@/components/ui/UiSlider.vue'
 import UiToggle from '@/components/ui/UiToggle.vue'
 
@@ -57,6 +59,15 @@ const JVM_PRESETS = [
 
 const { accounts, activeAccountId, refreshAccounts } = useStore()
 const section = ref<Section>('accounts')
+const {
+	available,
+	checking,
+	dialogOpen,
+	message: updateMessage,
+	error: updateError,
+	updateInstalling,
+	checkUpdates,
+} = useUpdater()
 const settings = ref<AppSettings | null>(null)
 const systemMemory = ref(8192)
 const status = ref<'idle' | 'saving' | 'saved'>('idle')
@@ -246,7 +257,7 @@ async function removeAccount(id: string) {
 						</button>
 					</div>
 
-					<div v-else-if="section === 'game' && settings" class="cards">
+					<div v-else-if="section === 'game' && settings" class="cards stagger">
 						<article class="card card--wide">
 							<header class="card__head">
 								<span class="card__icon"><MemoryStick /></span>
@@ -362,7 +373,7 @@ async function removeAccount(id: string) {
 						</article>
 					</div>
 
-					<div v-else-if="section === 'launcher' && settings" class="cards">
+					<div v-else-if="section === 'launcher' && settings" class="cards stagger">
 						<article class="card card--wide card--row">
 							<span class="card__icon card__icon--discord">
 								<svg viewBox="0 0 24 24" aria-hidden="true">
@@ -384,8 +395,9 @@ async function removeAccount(id: string) {
 							<div class="card__titles">
 								<h3>Автофикс сборок</h3>
 								<p>
-									Если после обновления модов игра вылетает при запуске, лаунчер сам найдёт
-									виноватые моды, выключит их и запустит игру снова
+									Если сборка не запускается, лаунчер найдёт причину и предложит исправление:
+									обновить загрузчик, поставить нужную Java или выключить мешающие моды. Ничего не
+									меняется без вашего согласия
 								</p>
 							</div>
 							<UiToggle v-model="autofixEnabled" label="Автофикс сборок" />
@@ -419,6 +431,22 @@ async function removeAccount(id: string) {
 					<div v-else-if="section === 'about'" class="about">
 						<AppLogo class="about__logo" />
 						<p class="about__version">Версия {{ packageInfo.version }}</p>
+						<UiButton
+							variant="primary"
+							:disabled="checking || updateInstalling"
+							@click="available ? (dialogOpen = true) : checkUpdates(true)"
+						>
+							{{
+								checking
+									? 'Проверяем…'
+									: available
+										? `Доступна версия ${available.version}`
+										: 'Проверить обновления'
+							}}
+						</UiButton>
+						<p v-if="updateMessage || updateError" role="status">
+							{{ updateError || updateMessage }}
+						</p>
 						<div class="about__author">
 							<img :src="authorMark" alt="Логотип leeonttev" width="34" height="22" />
 							<div>
@@ -426,7 +454,7 @@ async function removeAccount(id: string) {
 								<p class="about__origin">Основано на Modrinth App.</p>
 							</div>
 						</div>
-						<div class="cards">
+						<div class="cards stagger">
 							<article class="card">
 								<h3 class="about__title">Личный лаунчер</h3>
 								<p class="about__text">

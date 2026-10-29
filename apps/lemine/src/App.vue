@@ -7,6 +7,9 @@ import AppNavRail from '@/components/AppNavRail.vue'
 import AppLogo from '@/components/AppLogo.vue'
 import CreateInstanceModal from '@/components/CreateInstanceModal.vue'
 import TitleBar from '@/components/TitleBar.vue'
+import AutofixModal from '@/components/AutofixModal.vue'
+import LauncherUpdate from '@/components/LauncherUpdate.vue'
+import { useUpdater } from '@/composables/updater'
 import UiToaster from '@/components/ui/UiToaster.vue'
 import { startStore } from '@/composables/store'
 
@@ -21,6 +24,7 @@ onMounted(async () => {
 	try {
 		await core.initialize()
 		await startStore()
+		if (import.meta.env.PROD) void useUpdater().checkUpdates()
 	} catch (error) {
 		failure.value =
 			error && typeof error === 'object' && 'message' in error
@@ -57,6 +61,8 @@ onMounted(async () => {
 		<CreateInstanceModal />
 		<!-- Account creation stays above the instance creation dialog. -->
 		<AddAccountModal />
+		<AutofixModal />
+		<LauncherUpdate />
 	</div>
 	<UiToaster />
 </template>
@@ -131,18 +137,25 @@ onMounted(async () => {
 	opacity: 0;
 }
 
-.page-enter-active,
+.page-enter-active {
+	transition:
+		opacity 0.26s var(--ease-out),
+		translate 0.32s var(--ease-out);
+}
+
 .page-leave-active {
 	transition:
-		opacity 0.14s var(--ease),
-		transform 0.14s var(--ease);
+		opacity 0.12s var(--ease),
+		translate 0.12s var(--ease);
 }
 
 .page-enter-from {
 	opacity: 0;
+	translate: 0 12px;
 }
 
 .page-leave-to {
 	opacity: 0;
+	translate: 0 -6px;
 }
 </style>

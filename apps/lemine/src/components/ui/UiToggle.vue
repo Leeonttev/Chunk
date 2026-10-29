@@ -29,7 +29,7 @@ defineProps<{ label?: string }>()
 	border-radius: 999px;
 	background: var(--surface-4);
 	cursor: pointer;
-	transition: background-color 0.16s var(--ease);
+	transition: background-color 0.2s var(--ease);
 }
 
 .ui-toggle--on {
@@ -42,9 +42,19 @@ defineProps<{ label?: string }>()
 	left: 3px;
 	width: 16px;
 	height: 16px;
-	border-radius: 50%;
+	border-radius: 999px;
 	background: #fff;
-	transition: transform 0.16s var(--ease);
+	transition:
+		transform 0.26s var(--ease-spring),
+		width 0.16s var(--ease);
+}
+
+.ui-toggle:active .ui-toggle__thumb {
+	width: 20px;
+}
+
+.ui-toggle--on:active .ui-toggle__thumb {
+	transform: translateX(12px);
 }
 
 .ui-toggle--on .ui-toggle__thumb {

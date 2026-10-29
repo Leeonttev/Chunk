@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<title>Chunk</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="glow" aria-hidden="true"></div>
+		<header class="bar" data-tauri-drag-region>
+			<span class="bar__title" data-tauri-drag-region id="bar-title">Установка</span>
+			<button class="bar__button" id="minimize" aria-label="Свернуть">
+				<svg viewBox="0 0 24 24"><path d="M5 12h14" /></svg>
+			</button>
+			<button class="bar__button bar__button--close" id="close" aria-label="Закрыть">
+				<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg>
+			</button>
+		</header>
+
+		<main class="stage" data-tauri-drag-region>
+			<div class="brand" data-tauri-drag-region>
+				<img class="brand__mark" src="chunk-mark.svg" alt="" data-tauri-drag-region />
+				<h1 class="brand__name" data-tauri-drag-region>Chunk</h1>
+				<p class="brand__tagline" id="tagline" data-tauri-drag-region>Лаунчер Minecraft</p>
+			</div>
+
+			<section class="screen" id="screen-welcome">
+				<div class="facts">
+					<div class="fact">
+						<span class="fact__label">Версия</span>
+						<span class="fact__value" id="version">—</span>
+					</div>
+					<div class="fact">
+						<span class="fact__label">Размер</span>
+						<span class="fact__value" id="size">—</span>
+					</div>
+				</div>
+				<p class="path" id="path"></p>
+				<label class="check">
+					<input type="checkbox" id="desktop" checked />
+					<span class="check__box"></span>
+					Ярлык на рабочем столе
+				</label>
+				<button class="primary" id="install">Установить</button>
+			</section>
+
+			<section class="screen" id="screen-progress" hidden>
+				<div class="progress">
+					<div class="progress__head">
+						<span id="stage">Подготовка</span>
+						<span id="percent">0%</span>
+					</div>
+					<div class="progress__track"><div class="progress__fill" id="fill"></div></div>
+				</div>
+				<p class="hint">Это займёт несколько секунд</p>
+			</section>
+
+			<section class="screen" id="screen-done" hidden>
+				<div class="done">
+					<span class="done__badge">
+						<svg viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+					</span>
+					<p class="done__title" id="done-title">Chunk установлен</p>
+					<p class="hint" id="done-hint">Ярлык есть в меню «Пуск»</p>
+				</div>
+				<button class="primary" id="launch">Запустить Chunk</button>
+				<button class="secondary" id="finish">Закрыть</button>
+			</section>
+
+			<section class="screen" id="screen-uninstall" hidden>
+				<p class="lead">
+					Chunk будет удалён с компьютера. Сборки, миры и аккаунты останутся, если не отметить пункт
+					ниже.
+				</p>
+				<label class="check check--danger">
+					<input type="checkbox" id="remove-data" />
+					<span class="check__box"></span>
+					Удалить также сборки, миры и настройки
+				</label>
+				<button class="primary primary--danger" id="uninstall">Удалить</button>
+				<button class="secondary" id="cancel">Отмена</button>
+			</section>
+
+			<section class="screen" id="screen-error" hidden>
+				<div class="error">
+					<span class="error__badge">!</span>
+					<p class="error__text" id="error-text"></p>
+				</div>
+				<button class="primary" id="retry">Повторить</button>
+			</section>
+		</main>
+
+		<script src="main.js"></script>
+	</body>
+</html>

@@ -337,9 +337,9 @@ async function remove() {
 					@click="section = entry.value"
 				>
 					<component :is="entry.icon" class="tab__icon" />
-					{{ entry.label }}
-					<span v-if="entry.count" class="tab__count">{{ entry.count }}</span>
+					<span class="tab__label">{{ entry.label }}</span>
 					<span v-if="entry.dot" v-tip="'Есть обновления'" class="tab__dot" />
+					<span v-if="entry.count" class="tab__count">{{ entry.count }}</span>
 				</button>
 			</nav>
 
@@ -348,15 +348,17 @@ async function remove() {
 					<h2>{{ nav.find((entry) => entry.value === section)?.label }}</h2>
 					<p v-if="section === 'settings'">Параметры запуска только для этой сборки</p>
 				</header>
-				<InstanceContent
-					:key="instance.id + section"
-					v-if="section === 'mod' || section === 'resourcepack' || section === 'shaderpack'"
-					:instance="instance"
-					:type="section"
-				/>
-				<InstanceWorlds v-else-if="section === 'worlds'" :instance="instance" />
-				<InstanceLog v-else-if="section === 'log'" :instance="instance" />
-				<InstanceSettings v-else :key="instance.id" :instance="instance" />
+				<Transition name="section" mode="out-in">
+					<InstanceContent
+						:key="instance.id + section"
+						v-if="section === 'mod' || section === 'resourcepack' || section === 'shaderpack'"
+						:instance="instance"
+						:type="section"
+					/>
+					<InstanceWorlds v-else-if="section === 'worlds'" :key="'worlds'" :instance="instance" />
+					<InstanceLog v-else-if="section === 'log'" :key="'log'" :instance="instance" />
+					<InstanceSettings v-else :key="instance.id + 'settings'" :instance="instance" />
+				</Transition>
 			</section>
 		</div>
 
@@ -404,25 +406,55 @@ async function remove() {
 <style scoped>
 .instance-workspace {
 	display: grid;
-	grid-template-columns: 170px minmax(0, 1fr);
-	gap: 24px;
+	grid-template-columns: 200px minmax(0, 1fr);
+	gap: 20px;
 	flex: 1;
 	min-height: 0;
 }
+.section-enter-active {
+	transition:
+		opacity 0.22s var(--ease-out),
+		translate 0.28s var(--ease-out);
+}
+
+.section-leave-active {
+	transition: opacity 0.1s var(--ease);
+}
+
+.section-enter-from {
+	opacity: 0;
+	translate: 0 8px;
+}
+
+.section-leave-to {
+	opacity: 0;
+}
+
+.tab {
+	transition:
+		background-color 0.16s var(--ease),
+		color 0.16s var(--ease);
+}
+
+.tab__icon {
+	transition: transform 0.28s var(--ease-spring);
+}
+
+.tab:hover .tab__icon {
+	transform: scale(1.12);
+}
+
 .panel__heading {
 	margin-bottom: 16px;
 	flex-shrink: 0;
 }
 .panel__heading h2 {
-	font-size: 21px;
+	font-size: 20px;
 }
 .panel__heading p {
 	margin-top: 4px;
 	color: var(--text-3);
 	font-size: 13px;
-}
-.tab__count {
-	margin-left: auto;
 }
 @media (max-width: 1200px) {
 	.banner__main {
@@ -432,7 +464,7 @@ async function remove() {
 		width: 100%;
 	}
 	.instance-workspace {
-		grid-template-columns: 150px minmax(0, 1fr);
+		grid-template-columns: 176px minmax(0, 1fr);
 		gap: 16px;
 	}
 }
@@ -450,7 +482,7 @@ async function remove() {
 	flex-shrink: 0;
 	padding: 18px 20px;
 	border-radius: var(--radius-xl);
-	background: var(--surface-1);
+	background: linear-gradient(120deg, var(--surface-2), var(--surface-1) 60%);
 	overflow: hidden;
 	isolation: isolate;
 }
@@ -515,8 +547,8 @@ async function remove() {
 	padding: 3px 9px;
 	border: 0;
 	border-radius: 7px;
-	background: rgba(0, 0, 0, 0.35);
-	color: #fff;
+	background: var(--surface-3);
+	color: var(--text-2);
 	font: inherit;
 	font-size: 12px;
 	font-weight: 700;
@@ -535,13 +567,13 @@ async function remove() {
 }
 
 .banner__tag--back {
-	color: rgba(255, 255, 255, 0.75);
+	color: var(--text-2);
 }
 
 .banner__tag--back:hover,
 .banner__tag--pack:hover {
-	background: rgba(0, 0, 0, 0.55);
-	color: #fff;
+	background: var(--surface-4);
+	color: var(--text);
 }
 
 .banner__tag--pack {
@@ -573,7 +605,7 @@ async function remove() {
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 6px 18px;
-	color: rgba(255, 255, 255, 0.7);
+	color: var(--text-3);
 	font-size: 13px;
 }
 
@@ -658,21 +690,28 @@ async function remove() {
 .tabs {
 	display: flex;
 	flex-direction: column;
+	align-self: start;
 	flex-shrink: 0;
-	gap: 6px;
+	gap: 2px;
+	padding: 6px;
+	border-radius: var(--radius-xl);
+	background: var(--surface-1);
 	overflow-y: auto;
 	scrollbar-width: none;
 }
 
 .tab {
-	display: inline-flex;
+	display: flex;
 	flex-shrink: 0;
 	align-items: center;
-	gap: 8px;
-	height: 42px;
-	padding: 0 14px;
+	gap: 10px;
+	width: 100%;
+	line-height: 1;
+	text-align: left;
+	height: 40px;
+	padding: 0 12px;
 	border: 0;
-	border-radius: 12px;
+	border-radius: 10px;
 	background: transparent;
 	color: var(--text-2);
 	font: inherit;
@@ -691,13 +730,22 @@ async function remove() {
 
 .tab--active,
 .tab--active:hover {
-	background: var(--accent-soft);
-	color: #fff;
+	background: var(--surface-3);
+	color: var(--text);
 }
 
 .tab__icon {
 	width: 16px;
 	height: 16px;
+	flex-shrink: 0;
+}
+
+.tab__label {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .tab--active .tab__icon {
@@ -705,14 +753,25 @@ async function remove() {
 }
 
 .tab__count {
-	padding: 1px 7px;
-	border-radius: 7px;
-	background: rgba(0, 0, 0, 0.3);
+	min-width: 26px;
+	padding: 4px 6px;
+	border-radius: 999px;
+	background: var(--surface-3);
 	color: var(--text-2);
 	font-size: 11.5px;
+	font-weight: 700;
+	line-height: 1;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+
+.tab--active .tab__count {
+	background: var(--surface-4);
+	color: var(--text);
 }
 
 .tab__dot {
+	flex-shrink: 0;
 	width: 7px;
 	height: 7px;
 	border-radius: 50%;

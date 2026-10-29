@@ -157,6 +157,32 @@ async function pick(account: Account) {
 	cursor: pointer;
 	text-align: left;
 	font-weight: 550;
+	transition:
+		background-color 0.16s var(--ease),
+		color 0.16s var(--ease);
+}
+
+.sidebar__button::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 12px;
+	bottom: 12px;
+	width: 3px;
+	border-radius: 3px;
+	background: var(--accent);
+	transform: scaleY(0);
+	transition: transform 0.28s var(--ease-spring);
+}
+
+.sidebar__button svg {
+	transition:
+		color 0.16s var(--ease),
+		transform 0.28s var(--ease-spring);
+}
+
+.sidebar__button:hover svg {
+	transform: translateX(2px);
 }
 .sidebar__button:hover,
 .sidebar__account:hover {
@@ -168,14 +194,7 @@ async function pick(account: Account) {
 	color: var(--text);
 }
 .sidebar__button--active::before {
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 12px;
-	bottom: 12px;
-	width: 3px;
-	border-radius: 3px;
-	background: var(--accent);
+	transform: scaleY(1);
 }
 .sidebar__button--active svg {
 	color: var(--accent);

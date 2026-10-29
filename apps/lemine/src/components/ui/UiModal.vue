@@ -166,14 +166,24 @@ onBeforeUnmount(release)
 	padding: 4px 20px 20px;
 }
 
-.ui-modal-enter-active,
+.ui-modal-enter-active {
+	transition: opacity 0.22s var(--ease-out);
+}
+
 .ui-modal-leave-active {
 	transition: opacity 0.16s var(--ease);
 }
 
-.ui-modal-enter-active .ui-modal__panel,
+.ui-modal-enter-active .ui-modal__panel {
+	transition:
+		transform 0.34s var(--ease-spring),
+		opacity 0.22s var(--ease-out);
+}
+
 .ui-modal-leave-active .ui-modal__panel {
-	transition: transform 0.18s var(--ease);
+	transition:
+		transform 0.16s var(--ease),
+		opacity 0.16s var(--ease);
 }
 
 .ui-modal-enter-from,
@@ -181,8 +191,13 @@ onBeforeUnmount(release)
 	opacity: 0;
 }
 
-.ui-modal-enter-from .ui-modal__panel,
+.ui-modal-enter-from .ui-modal__panel {
+	opacity: 0;
+	transform: translateY(14px) scale(0.95);
+}
+
 .ui-modal-leave-to .ui-modal__panel {
-	transform: translateY(8px) scale(0.98);
+	opacity: 0;
+	transform: translateY(6px) scale(0.98);
 }
 </style>

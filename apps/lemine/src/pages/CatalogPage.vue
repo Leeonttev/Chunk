@@ -335,7 +335,7 @@ function pickSort(value: SortIndex) {
 			{{ target.game_version }}
 		</p>
 
-		<div class="grid">
+		<div class="grid stagger">
 			<article v-for="hit in hits" :key="hit.project_id" class="card" @click="openProject(hit)">
 				<div class="card__cover" :style="cover(hit)">
 					<span class="card__shade" />

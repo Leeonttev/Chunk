@@ -987,3 +987,132 @@ LeMine — личный некоммерческий лаунчер Minecraft д
 - В корневой .gitignore добавлены .env.* (включая .env.local и .env.production); шаблоны .env.example, .env.sample и .env.template разрешены.
 - Проверены список неигнорируемых файлов и origin: https://github.com/Leeonttev/Chunk.git. Среди кандидатов не обнаружены .env, ключи по расширениям, локальные базы, логи, исполняемые файлы или файлы больше 50 МиБ. Это проверка имён и размеров, не полный аудит содержимого на секреты. Маленький тестовый simple-zip.zip сохранён.
 - Коммит и отправка на GitHub не выполнялись.
+
+### 2026-10-29 — Проверка автообновления лаунчера (правки пользователя)
+- Пользователь сам добавил автообновление через GitHub Releases: `src/composables/updater.ts`, `src/composables/update-lock.ts`, `src/components/LauncherUpdate.vue`, кнопка «Проверить обновления» в «О приложении» (`SettingsPage.vue`), зависимость `@tauri-apps/plugin-updater`. В `tauri.conf.json` раздел `plugins.updater` (свой pubkey, endpoint `https://github.com/Leeonttev/Chunk/releases/latest/download/latest.json`, `installMode: passive`) и capability `updater`.
+- Исправлено после проверки:
+  - `updater.ts` вызывал несуществующий `core.processes.list()`. `vue-tsc` падал, а значит, падала и `vite build`, установщик не собрался бы. Теперь процессы проверяются через `core.instances.processes(id)` по всем сборкам;
+  - кнопки использовали класс `btn`, которого в проекте нет (стандартные кнопки Windows). Заменены на `UiButton` (`ghost` / `primary`);
+  - `tauri.conf.json` был пересохранён через PowerShell `ConvertTo-Json` (4 пробела, `'` вместо `'`). Возвращены табы, прогнан prettier, содержимое не изменилось. Новые файлы тоже отформатированы prettier.
+- Чтобы обновления реально заработали, установщик нужно собирать с фичей `updater` и артефактами обновления. Иначе `are_updates_enabled` вернёт false, и лаунчер напишет «Обновления доступны в установленной версии». Нужно `pnpm tauri build --bundles nsis --features updater`, в `bundle` должно быть `"createUpdaterArtifacts": true`, а в окружении — `TAURI_SIGNING_PRIVATE_KEY` (и пароль, если задан). В GitHub Release выкладывать `.exe`, `.exe.sig` и `latest.json`. `tauri-release.conf.json` для этого не подходит: там подпись DigiCert и ключ/адрес Modrinth.
+- Файлы: `src/composables/updater.ts`, `src/components/LauncherUpdate.vue`, `src/pages/SettingsPage.vue`, `apps/app/tauri.conf.json`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла, prettier чист.
+
+### 2026-10-29 — Страница сборки: список модов таблицей, как в Modrinth
+- Жалоба: «всё сливается» — вкладки, фон и список почти одного цвета, у строк нет разделителей, серые переключатели далеко от названия.
+- `InstanceContent.vue`:
+  - список — таблица `.table` на `--surface-1` с закреплённой строкой заголовков (`position: sticky`, `--surface-2`): «Название / Версия / Действия»; колонки задаёт `--columns` (`1fr | 140–260px | 190px`). У таблицы `overflow: clip`, а не `hidden`, иначе закрепление заголовка не работает;
+  - строки 64 px с разделителем `rgba(255,255,255,0.06)` и лёгкой подсветкой при наведении;
+  - колонка «Название»: иконка, название (ссылка на страницу мода), под ним автор и пилюли «из сборки» / «выключен автофиксом»;
+  - колонка «Версия»: номер версии и имя файла;
+  - колонка «Действия»: «Обновить» (если есть), переключатель, корзина — всё видно сразу. Монохромная перекраска переключателей убрана, они снова акцентного зелёного цвета;
+  - фильтры — пилюли; активная залита акцентом. Если фильтр всего один («Все»), вместо него строка «N всего · M выключено». «Обновить всё» — мягкая акцентная пилюля. «Из файла» — кнопка `secondary`;
+  - закреплённая шапка с поиском удалена: в таблице закреплены заголовки колонок.
+- `InstancePage.vue`:
+  - вкладки сборки лежат на отдельной панели `--surface-1` (ширина 200 px, 176 px на узком окне); активная вкладка — `--surface-3` с белым текстом;
+  - баннер с лёгким градиентом `--surface-2 → --surface-1`; метки баннера на `--surface-3` вместо полупрозрачного чёрного, мета-строка цвета `--text-3`.
+- Файлы: `src/components/instance/InstanceContent.vue`, `src/pages/InstancePage.vue`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла, на скриншоте окна Chunk таблица с закреплённым заголовком, разделителями и зелёными переключателями.
+
+### 2026-10-29 — Ровные вкладки страницы сборки
+- В пунктах вкладок текст был голым текстовым узлом в `inline-flex`, а счётчик с `margin-left: auto` имел разную ширину, поэтому подписи и числа стояли неровно.
+- Теперь `.tab` — `display: flex` во всю ширину, `line-height: 1`, отступ между элементами 10 px. Подпись — отдельный `.tab__label` (`flex: 1`, многоточие при нехватке места), за ним точка обновления, затем счётчик.
+- Счётчик — пилюля минимум 26 px с цифрами одной ширины (`tabular-nums`), фон `--surface-3`, у активной вкладки `--surface-4`.
+- Файлы: `src/pages/InstancePage.vue`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла. На скриншоте не проверено: пользователь был в настройках.
+
+### 2026-10-29 — Скруглённые углы закреплённого заголовка таблицы
+- При прокрутке у прилипшей строки «Название / Версия / Действия» углы становились квадратными: скругление давал `overflow: clip` таблицы, а её верхний край уезжал.
+- Теперь фон заголовка нарисован двумя псевдоэлементами: `::before` — квадратная подложка цвета страницы (`--bg`), которая скрывает строки под углами, и `::after` — сам фон `--surface-2` со скруглением `--radius-xl` сверху. У заголовка `isolation: isolate`, чтобы отрицательные `z-index` псевдоэлементов не уходили под таблицу.
+- Файлы: `src/components/instance/InstanceContent.vue`, `AGENTS.md`.
+- Проверка: `vue-tsc` и prettier прошли.
+
+### 2026-10-29 — Отмена установки
+- Индикатор «Установка N%» в шапке (`TitleBar.vue`) стал кнопкой со стрелкой. Он открывает `UiPopover` (320 px) со списком текущих задач: иконка сборки, название (`job.display.title` или имя сборки), статус («Подготовка… / N% / На паузе / Отменяем…»), полоска прогресса и кнопка ✕.
+- ✕ вызывает новый `core.installs.cancel(jobId)` → `plugin:install|install_job_cancel { jobId }`; ядро само откатывает то, что успело поменять. Кнопка недоступна, если `job.can_cancel` ложно (подсказка «Этот шаг нельзя прервать»), во время `job.canceling` и пока ждём ответа. Отменённая задача уходит из `installJobs` по событию `install_job`: `store.ts` удаляет все задачи не в статусе queued/running, тост об ошибке показывается только для failed. Когда задач не остаётся, список закрывается.
+- Файлы: `src/components/TitleBar.vue`, `src/api/core.ts`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла. Настоящую отмену в окне не проверяли.
+
+### 2026-10-29 — Фильтры модов одним сегментом
+- Пилюли фильтров переносились на вторую строку, показывали бесполезные варианты («Мои 0»; «Из сборки 71» при «Все 71»), а «Обновить всё» висело отдельно.
+- Теперь фильтры — один сегментированный переключатель `.segment` на `--surface-1` в одну строку (без переноса, при нехватке места прокручивается вбок). Активный пункт — `--surface-3`, число рядом с подписью приглушено, у «Обновления» оно акцентное. Пункты «Из сборки / Мои» отделены тонкой чертой и показываются, только если в сборке есть и моды автора, и свои (`0 < packCount < всего`). «Есть обновления» переименовано в «Обновления». Ряд — `space-between`: сегмент слева, «Обновить всё» справа.
+- Файлы: `src/components/instance/InstanceContent.vue`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла, на скриншоте окна фильтры в одну строку («Все 71 | Обновления 37»), список отмены установок в шапке работает («Отменяем…»).
+
+### 2026-10-29 — Отмена установки больше не зависает на «Отменяем…»
+- Что было: отмена реально срабатывала (в логе `Install job … failed: install was canceled`, сборка откатилась), но в списке навсегда оставалось «Отменяем…». Причина — гонка в ядре: `cancel_job` (`packages/app-lib/src/install/runner.rs`) читает снимок задачи и затем рассылает его событием `install_job`. Если рабочий поток успевает завершиться между чтением и рассылкой, финальное событие (canceled/failed) приходит раньше, а следом — устаревшее running + canceling. `store.ts` возвращал задачу в `installJobs`.
+- Исправлено во фронтенде, ядро не менялось:
+  - `store.ts` хранит `finishedJobIds`: после финального статуса все события этой задачи игнорируются. Тост «Установка не удалась» не показывается для задачи, которая отменялась (`job.canceling`);
+  - `syncInstallJobs()` сверяет `installJobs` с ядром через новый `core.installs.active()` (`plugin:install|install_job_list { includeFinished: false }`) и убирает задачи, которых ядро уже не выполняет;
+  - `TitleBar.cancel` после запроса отмены до 10 раз с шагом 1,5 с вызывает `syncInstallJobs`, пока строка не исчезнет. Если запрос отмены вернул ошибку, сначала тоже сверяется с ядром: задача могла уже завершиться.
+- Файлы: `src/composables/store.ts`, `src/api/core.ts`, `src/components/TitleBar.vue`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла. Повторная отмена в окне не проверена.
+
+### 2026-10-29 — Автофикс: ошибка загрузчика и обновление Fabric/Quilt Loader
+- Случай пользователя: после «Обновить всё» в Sakeva Optimized моды требуют Fabric Loader ≥ 0.19.5 / 0.20.1, а в сборке 0.18.4. Fabric не вылетает, а открывает окно «Incompatible mods found!» и ждёт. Процесс жив, события `finished` нет, поэтому автофикс не запускался. Даже если бы запустился, он выключил бы все моды из строк «Mod 'X' requires … of mod 'Fabric Loader'», хотя виноват загрузчик.
+- `src/composables/autofix.ts`:
+  - `noteLaunch` запускает `watchForLoaderError`: каждые 2 с первые 3 минуты читает `core.logs.live` и ищет `LOADER_ERROR` (Incompatible mods found / Some of your mods are incompatible / Mod resolution failed / FormattedException…). При совпадении (если автофикс включён) ставит `session.loaderError` и закрывает игру через `core.instances.kill`. `noteStop` и конец сессии останавливают слежку;
+  - `handleSessionEnd` считает такую сессию вылетом при любом коде выхода. Сначала `requiredLoaderVersion` ищет в отчёте и логе требования к загрузчику (`Replace mod 'Fabric Loader' (fabricloader) X with version Y`, `requires version Y or later of mod 'Fabric Loader'`; для Quilt аналогично, `LOADER_MODS`). Если нужен загрузчик новее установленного, `upgradeLoader` берёт из `core.metadata.loaderVersions` новейшую стабильную версию ≥ требуемой (запись для версии игры или общая запись `${…}`), меняет `loader_version` через `core.instances.edit`, переустанавливает игру (`core.instances.reinstallGame` → `install_existing_instance`; не `repair`, который у сборок с Modrinth вернул бы загрузчик сборки), ждёт окончания установки (`waitForInstalls` по `core.installs.active()`, до 10 минут) и перезапускает игру. Тосты: «Автофикс: обновляем загрузчик», «Загрузчик обновлён до X»;
+  - в `blamed` строки «Mod … requires … Fabric/Quilt Loader» больше не считаются виной мода;
+  - проверено на реальном `logs/latest.log` сборки Sakeva Optimized: `requiredLoaderVersion` → `0.20.1`, ни один мод не обвинён.
+- `core.instances.reinstallGame(id)` — новый метод в `src/api/core.ts`.
+- Ограничения: число попыток общее (до 3 за запуск). Forge/NeoForge обновление загрузчика не поддерживают, для них по-прежнему выключаются виноватые моды.
+- Файлы: `src/composables/autofix.ts`, `src/api/core.ts`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла, разбор лога проверен в node на реальном логе. Полный цикл (закрытие окна ошибки → обновление загрузчика → перезапуск) в окне не прогонялся.
+
+### 2026-10-29 — Автофикс по кнопке: план, лог и согласие пользователя
+- Почему окно ошибки Fabric не закрылось: `logs_get_live_log_buffer` возвращает **одну строку** (`CensoredString`), а не массив. `watchForLoaderError` вызывал `log.some(...)` на строке и молча падал внутри `setInterval`. По той же причине ломался `crashText` (`.join`). Теперь `liveLog()` в `autofix.ts` разбивает буфер на строки, тип `core.logs.live` — `string | string[]`.
+- По просьбе пользователя автофикс больше ничего не меняет сам:
+  - при обнаружении проблемы (окно ошибки загрузчика в живом логе — `LOADER_ERROR`; или вылет в первые 3 минуты) `offerFix` строит план `FixPlan` с шагами `FixStep`, ничего не трогая, и кладёт его в `pendingFix`;
+  - шаги: `loader` — новейшая стабильная версия Fabric/Quilt Loader ≥ требуемой (`Replace mod 'Fabric Loader' … with version`, `requires version … of mod 'Fabric Loader'`, `depends fabricloader @ [>=…]`); `java` — требуемая Java (`requires version N or later of '…' (java)`, `depends java @ [>=N]`, `class file version` − 44); `disable` — виноватые моды (как раньше, только если нет шагов про загрузчик или Java). Строки «Mod … requires … (java)» больше не обвиняют мод;
+  - `evidence` — до 40 строк лога и отчёта о вылете с ошибками и зависимостями;
+  - новый `src/components/AutofixModal.vue` (в `App.vue`): окно «Сборка не запустилась», список шагов с иконками и пояснениями, раскрывающийся лог «Почему так решил», кнопки «Не сейчас» и «Автофикс»;
+  - `applyFix`: закрывает игру, если открыто окно ошибки (`gameOpen`), выполняет шаги по одному со статусом (крутилка / ✓ / ✕ с текстом ошибки) и перезапускает игру. Загрузчик: `instances.edit` + `reinstallGame` + ожидание установки. Java: найденная `java.find(N)` или `java.autoInstall(N)`, затем `java_path` у сборки. Моды: `content.toggle` с меткой «выключен автофиксом». При ошибке шага кнопка меняется на «Повторить»;
+  - `noteLaunch(instance, account, relaunch)` — перезапуск передаётся при запуске; `handleSessionEnd(instance, exitCode)` больше не принимает функцию перезапуска. Если план уже предложен по окну ошибки, закрытие игры второго плана не создаёт (`session.offered`). Лимит попыток убран: каждый раз решает пользователь;
+  - настройка «Автофикс сборок» теперь означает «предлагать исправление», описание обновлено.
+- Проверено в node на реальном `launcher_log.txt` Sakeva Optimized: нужен Fabric Loader 0.20.1 и Java 25.
+- Файлы: `src/composables/autofix.ts` (переписан), `src/components/AutofixModal.vue` (новый), `src/composables/store.ts`, `src/api/core.ts`, `src/App.vue`, `src/pages/SettingsPage.vue`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла. Полный цикл в окне не прогонялся.
+
+### 2026-10-29 — Плавность и анимации по всему интерфейсу
+- `styles/base.css`:
+  - кривые `--ease-spring` (с лёгким перелётом) и `--ease-out`;
+  - глобальное нажатие: `button:not(:disabled):active, a:active { scale: 0.97 }`. Используется отдельное свойство `scale`, а не `transform`, чтобы не ломать собственные трансформации компонентов;
+  - утилита `.stagger`: прямые дети всплывают (`@keyframes rise`: прозрачность и `translate` 10 px → 0, 0,42 с) с задержкой 25 мс на элемент, начиная с 11-го — 250 мс. Анимация играет при появлении элемента: при первой загрузке, новых карточках бесконечной прокрутки и смене фильтра;
+  - `@keyframes fade-in` про запас;
+  - `prefers-reduced-motion: reduce` выключает анимации и переходы.
+- `.stagger` добавлен: сетка каталога, сетки сборок, сетки скриншотов по дням, сетка скинов гардероба (`library__grid`), карточки настроек (`.cards`), таблица модов (у строк 0,36 с).
+- Переходы:
+  - страниц (`App.vue`): появление 0,26–0,32 с со сдвигом 12 px снизу, уход 0,12 с со сдвигом 6 px вверх;
+  - разделов сборки (`InstancePage.vue`, `Transition name="section"`; у каждого раздела свой `key`);
+  - модалок (`UiModal.vue`): окно появляется с пружиной `scale 0.95 → 1` и подъёмом на 14 px, закрывается быстрее;
+  - всплывающих меню (`UiPopover.vue`): пружина `scale 0.97`.
+- Мелочи: бегунок переключателя (`UiToggle.vue`) ездит с пружиной и растягивается при нажатии. Полоска активного пункта боковой панели (`AppNavRail.vue`) теперь у всех кнопок и вырастает `scaleY 0 → 1`; иконки сдвигаются на 2 px при наведении. Иконки вкладок сборки увеличиваются при наведении. Плавная смена фона и цвета у кнопок боковой панели и вкладок.
+- Файлы: `src/styles/base.css`, `src/App.vue`, `src/components/ui/{UiModal,UiPopover,UiToggle}.vue`, `src/components/AppNavRail.vue`, `src/components/instance/InstanceContent.vue`, `src/pages/{CatalogPage,InstancesPage,ScreenshotsPage,WardrobePage,SettingsPage,InstancePage}.vue`, `AGENTS.md`.
+- Проверка: `vue-tsc` прошла, на скриншоте после анимации всё стоит на местах.
+
+### 2026-10-29 — Собственный графический установщик Chunk
+- Новый крейт `apps/installer` (`chunk-installer`, в `members` корневого `Cargo.toml`) — маленькое приложение Tauri 2 с окном в стиле лаунчера: тёмный фон, зелёное свечение, плавающий логотип `chunk-mark.svg`, шрифт Onest (woff2 лежат в `ui/`), свои кнопки окна. Экраны: установка (версия, размер, папка, галочка «Ярлык на рабочем столе») → прогресс (этап и процент, блик на полоске) → «Chunk установлен» (галочка рисуется анимацией, «Запустить Chunk» / «Закрыть»). Есть экран ошибки с «Повторить», а запущенный как `uninstall.exe` или с `--uninstall` — экран удаления с галочкой «Удалить также сборки, миры и настройки». Интерфейс — обычные `ui/index.html`, `style.css`, `main.js` через `window.__TAURI__` (`withGlobalTauri`), без сборщика.
+- Лаунчер вшит внутрь: `build.rs` сжимает `target/release/LeMine.exe` (или файл из `CHUNK_PAYLOAD`) zstd 19 в `OUT_DIR/payload.zst`, передаёт размер (`CHUNK_PAYLOAD_SIZE`) и версию из `apps/lemine/package.json` (`CHUNK_VERSION`). Без файла лаунчера крейт собирается, но кнопка установки недоступна.
+- Раскладка повторяет Tauri NSIS (сверено с `target/release/nsis/x64/installer.nsi`), чтобы автообновление, которое по-прежнему ставит NSIS-пакеты (`/UPDATE` не вызывает старый деинсталлятор), обновляло такую установку на месте:
+  - папка `%LOCALAPPDATA%\Chunk` (или `InstallLocation` из реестра);
+  - `LeMine.exe` и `uninstall.exe` (копия самого установщика);
+  - `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall\Chunk` с теми же значениями, что пишет NSIS (DisplayName, DisplayIcon, DisplayVersion, Publisher, InstallLocation, UninstallString, MainBinaryName, CurrentUser, NoModify, NoRepair, EstimatedSize);
+  - `HKCU\Software\leeonttev\Chunk` (по умолчанию — папка);
+  - ярлык `Chunk.lnk` в меню «Пуск» и, по выбору, на рабочем столе (с учётом OneDrive). Ярлыки создаются через PowerShell `WScript.Shell`, без AppUserModelID.
+  В `apps/app/tauri.conf.json` добавлено `bundle.publisher: "leeonttev"`, чтобы NSIS писал того же издателя и тот же ключ продукта.
+- Установка: проверка, что `LeMine.exe` не запущен (`tasklist`), потоковая распаковка в `LeMine.exe.new` с событиями `progress`, затем замена. Удаление: ярлыки, ключи реестра, файлы папки; по галочке — `%APPDATA%\LeMine` и `%LOCALAPPDATA%\LeMine`. Сама папка удаляется отложенной командой `cmd` после выхода. С `/P` или `/S` удаление идёт без окна — для совместимости с вызовом из NSIS.
+- Окно создаётся скрытым и показывается из `main.js` после загрузки данных, без белой вспышки. Разрешения: `capabilities/default.json` (core и окно: перетаскивание, свернуть, закрыть, показать).
+- Сборка: `pnpm tauri build --no-bundle` в `apps/app` (свежий `LeMine.exe`), затем `cargo build -p chunk-installer --release` → `target/release/chunk-installer.exe`.
+- Проверка: `cargo check` и отладочная сборка прошли, отладочное окно установщика снято скриншотом (кнопку установки не нажимали).
+- Итог сборки: `LeMine.exe` 32,8 МБ (29.10, свежий), `chunk-installer.exe` 18,1 МБ. Скопирован на рабочий стол как `Chunk-Setup-0.1.0.exe`. Установку на машине пользователя не запускали.
+
+### 2026-10-29 — Подготовка выпусков с автообновлением
+- Ключ подписи обновлений — `C:\Users\leeon\.chunk\updater.key` (без пароля, проверено `tauri signer sign -p ""`), публичная часть совпадает с `plugins.updater.pubkey`. Ключ не в репозитории; его потеря = невозможность обновлять установленные копии.
+- `apps/app/tauri.conf.json`: `bundle.createUpdaterArtifacts: true` (рядом с NSIS-пакетом появляется `.sig`).
+- Новый `scripts/release-chunk.mjs`: `node scripts/release-chunk.mjs "что нового"`. Скрипт:
+  - берёт версию из `apps/lemine/package.json` и подставляет ключ в `TAURI_SIGNING_PRIVATE_KEY` (путь можно переопределить через `CHUNK_SIGNING_KEY`);
+  - собирает `pnpm tauri build --bundles nsis --features updater`, затем `cargo build -p chunk-installer --release`;
+  - складывает в `dist/release-<версия>/` (папка в `.gitignore`): `Chunk-Setup-<v>.exe`, `Chunk_<v>_x64-setup.exe`, `.sig` и `latest.json` (`platforms.windows-x86_64` с подписью и URL `https://github.com/Leeonttev/Chunk/releases/download/v<v>/Chunk_<v>_x64-setup.exe`).
+- Лаунчер ищет `https://github.com/Leeonttev/Chunk/releases/latest/download/latest.json`, поэтому выпуск должен быть «latest» (не черновик, не pre-release), с тегом `v<версия>`. Репозиторий публичный.
+- Файлы: `apps/app/tauri.conf.json`, `scripts/release-chunk.mjs`, `AGENTS.md`.

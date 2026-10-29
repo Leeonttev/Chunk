@@ -87,7 +87,12 @@ useEventListener(window, 'scroll', () => open.value && place(), { capture: true,
 	scrollbar-color: var(--surface-4) transparent;
 }
 
-.ui-popover-enter-active,
+.ui-popover-enter-active {
+	transition:
+		opacity 0.18s var(--ease-out),
+		transform 0.24s var(--ease-spring);
+}
+
 .ui-popover-leave-active {
 	transition:
 		opacity 0.12s var(--ease),
@@ -97,6 +102,6 @@ useEventListener(window, 'scroll', () => open.value && place(), { capture: true,
 .ui-popover-enter-from,
 .ui-popover-leave-to {
 	opacity: 0;
-	transform: translateY(-4px);
+	transform: translateY(-6px) scale(0.97);
 }
 </style>

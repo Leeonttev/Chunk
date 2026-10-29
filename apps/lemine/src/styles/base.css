@@ -53,6 +53,78 @@
 	--font-heading: var(--font);
 	--font-pixel: 'Pixelify Sans', var(--font);
 	--ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+	/** Slight overshoot for things that pop into place: toggles, badges, pressed buttons. */
+	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/** Buttons sink a little while pressed; `scale` stays independent of each component's own transform. */
+button:not(:disabled):active,
+a:active {
+	scale: 0.97;
+}
+
+/** Children of a `.stagger` list rise into place one after another when they first appear. */
+.stagger > * {
+	animation: rise 0.42s var(--ease-out) both;
+}
+
+.stagger > :nth-child(2) {
+	animation-delay: 25ms;
+}
+.stagger > :nth-child(3) {
+	animation-delay: 50ms;
+}
+.stagger > :nth-child(4) {
+	animation-delay: 75ms;
+}
+.stagger > :nth-child(5) {
+	animation-delay: 100ms;
+}
+.stagger > :nth-child(6) {
+	animation-delay: 125ms;
+}
+.stagger > :nth-child(7) {
+	animation-delay: 150ms;
+}
+.stagger > :nth-child(8) {
+	animation-delay: 175ms;
+}
+.stagger > :nth-child(9) {
+	animation-delay: 200ms;
+}
+.stagger > :nth-child(10) {
+	animation-delay: 225ms;
+}
+.stagger > :nth-child(n + 11) {
+	animation-delay: 250ms;
+}
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		translate: 0 10px;
+	}
+	to {
+		opacity: 1;
+		translate: 0 0;
+	}
+}
+
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-delay: 0ms !important;
+		transition-duration: 0.01ms !important;
+	}
 }
 
 *,

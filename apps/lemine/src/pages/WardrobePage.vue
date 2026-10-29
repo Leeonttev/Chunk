@@ -270,7 +270,7 @@ async function remove(skin: Skin) {
 					</h2>
 				</header>
 
-				<div class="library__grid">
+				<div class="library__grid stagger">
 					<button
 						type="button"
 						class="tile tile--upload"

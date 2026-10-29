@@ -249,7 +249,7 @@ onKeyStroke('ArrowRight', () => step(1))
 					{{ day.label }}
 					<span class="day__count">{{ day.shots.length }}</span>
 				</h2>
-				<div class="grid">
+				<div class="grid stagger">
 					<button
 						v-for="shot in day.shots"
 						:key="shot.id"

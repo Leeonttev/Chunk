@@ -1,5 +1,7 @@
 import { invoke } from '@tauri-apps/api/core'
 
+import type { InstallJobSnapshot } from '#events/InstallJobSnapshot'
+
 import { eventChannel } from './events'
 
 export type Loader = 'vanilla' | 'fabric' | 'forge' | 'quilt' | 'neoforge'
@@ -164,6 +166,9 @@ export const core = {
 						instanceId: instance.id,
 						force: false,
 					}),
+		/** Reinstalls the game files only, e.g. after switching the loader version; pack files are left alone. */
+		reinstallGame: (instanceId: string) =>
+			call<unknown>('plugin:install|install_existing_instance', { instanceId, force: false }),
 		/** Creates a new instance from a Modrinth modpack version. */
 		installModpack: (pack: {
 			projectId: string
@@ -208,6 +213,14 @@ export const core = {
 		recentIcons: () => call<IconConfig[]>('plugin:instance|instance_get_recent_icon_configs'),
 		processes: (instanceId: string) =>
 			call<unknown[]>('plugin:process|process_get_by_instance_id', { instanceId }),
+	},
+
+	installs: {
+		/** Asks the core to stop an install job; it rolls back what it already changed. */
+		cancel: (jobId: string) => call<unknown>('plugin:install|install_job_cancel', { jobId }),
+		/** Install jobs that are still queued or running, straight from the core. */
+		active: () =>
+			call<InstallJobSnapshot[]>('plugin:install|install_job_list', { includeFinished: false }),
 	},
 
 	content: {
@@ -306,7 +319,7 @@ export const core = {
 
 	logs: {
 		live: (instanceId: string) =>
-			call<string[]>('plugin:logs|logs_get_live_log_buffer', { instanceId }),
+			call<string | string[]>('plugin:logs|logs_get_live_log_buffer', { instanceId }),
 		clear: (instanceId: string) =>
 			call<void>('plugin:logs|logs_clear_live_log_buffer', { instanceId }),
 	},

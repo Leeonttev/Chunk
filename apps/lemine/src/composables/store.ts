@@ -8,6 +8,7 @@ import { onAppEvent } from '@/api/events'
 
 import { handleSessionEnd, noteLaunch, noteStop } from './autofix'
 import { reportError } from './toasts'
+import { updateInstalling } from './update-lock'
 
 const instances = ref<Instance[]>([])
 const accounts = ref<Account[]>([])
@@ -18,6 +19,11 @@ const launching = reactive(new Set<string>())
 const runningAs = reactive(new Map<string, Account>())
 const runningAccountIds = useStorage<Record<string, string>>('lemine:running-instance-accounts', {})
 const installJobs = reactive(new Map<string, InstallJobSnapshot>())
+/**
+ * Jobs that already reported a final status. The core can deliver a stale "running" snapshot
+ * after the final one (e.g. the reply to a cancel request), which must not bring the job back.
+ */
+const finishedJobIds = new Set<string>()
 const selectedInstanceId = useStorage<string | null>('lemine:selected-instance', null)
 
 const sortedInstances = computed(() =>
@@ -108,16 +114,19 @@ export async function startStore() {
 		const instance = instances.value.find((entry) => entry.id === payload.instance_id)
 		const code = /exit_code=(-?\d+)/.exec(payload.message)?.[1]
 		if (instance) {
-			void handleSessionEnd(instance, code === undefined ? null : Number(code), launchInstance)
+			void handleSessionEnd(instance, code === undefined ? null : Number(code))
 		}
 	})
 	onAppEvent('install_job', (job) => {
-		if (!job.instance_id) return
+		if (!job.instance_id || finishedJobIds.has(job.job_id)) return
 		if (job.status === 'queued' || job.status === 'running') {
 			installJobs.set(job.instance_id, job)
 		} else {
+			finishedJobIds.add(job.job_id)
 			installJobs.delete(job.instance_id)
-			if (job.status === 'failed' && job.error) reportError(job.error, 'Установка не удалась')
+			if (job.status === 'failed' && job.error && !job.canceling) {
+				reportError(job.error, 'Установка не удалась')
+			}
 			void refreshInstances()
 		}
 	})
@@ -127,8 +136,23 @@ export async function startStore() {
 	setInterval(() => void refreshRunning(), RUNNING_POLL_MS)
 }
 
+/** Drops jobs the core no longer runs, in case their final event was lost or overtaken. */
+export async function syncInstallJobs() {
+	const active = await core.installs.active().catch(() => null)
+	if (!active) return
+	const activeIds = new Set(active.map((job) => job.job_id))
+	for (const [instanceId, job] of installJobs) {
+		if (!activeIds.has(job.job_id)) {
+			finishedJobIds.add(job.job_id)
+			installJobs.delete(instanceId)
+		}
+	}
+	if (installJobs.size === 0) void refreshInstances()
+}
+
 /** Launches an instance under the given account, making it the remembered default. */
 export async function launchInstance(instance: Instance, account: Account | null) {
+	if (updateInstalling.value) return
 	if (!account) throw new Error('Нужен аккаунт')
 	if (running.has(instance.id) || launching.has(instance.id)) return
 	launching.add(instance.id)
@@ -136,7 +160,7 @@ export async function launchInstance(instance: Instance, account: Account | null
 	let launched = false
 	try {
 		await selectAccount(account)
-		noteLaunch(instance.id, account)
+		noteLaunch(instance, account, launchInstance)
 		await core.instances.run(instance.id)
 		running.add(instance.id)
 		launched = true

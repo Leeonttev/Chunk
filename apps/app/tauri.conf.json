@@ -12,18 +12,11 @@
 		"copyright": "",
 		"targets": "all",
 		"externalBin": [],
-		"icon": [
-			"icons/128x128.png",
-			"icons/128x128@2x.png",
-			"icons/icon.icns",
-			"icons/icon.ico"
-		],
+		"icon": ["icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
 		"windows": {
 			"nsis": {
 				"installMode": "currentUser",
-				"languages": [
-					"Russian"
-				],
+				"languages": ["Russian"],
 				"installerHooks": "./nsis/hooks.nsi"
 			}
 		},
@@ -55,7 +48,9 @@
 			"deb": {
 				"depends": []
 			}
-		}
+		},
+		"publisher": "leeonttev",
+		"createUpdaterArtifacts": true
 	},
 	"productName": "Chunk",
 	"version": "../lemine/package.json",
@@ -64,11 +59,16 @@
 	"plugins": {
 		"deep-link": {
 			"desktop": {
-				"schemes": [
-					"modrinth"
-				]
+				"schemes": ["modrinth"]
 			},
 			"mobile": []
+		},
+		"updater": {
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFGQjU5NTQyNDZFRTc0QzMKUldURGRPNUdRcFcxSCtLbElJenRwYlA3Tm1QU3Yybk9paE5WYkZ0anhNa0swd3ZEandnY0x4M0YK",
+			"endpoints": ["https://github.com/Leeonttev/Chunk/releases/latest/download/latest.json"],
+			"windows": {
+				"installMode": "passive"
+			}
 		}
 	},
 	"app": {
@@ -103,17 +103,11 @@
 				],
 				"enable": true
 			},
-			"capabilities": [
-				"core",
-				"plugins"
-			],
+			"capabilities": ["core", "plugins", "updater"],
 			"csp": {
 				"default-src": "'self' customprotocol: asset:",
 				"connect-src": "ipc: http://ipc.localhost https://modrinth.com https://*.modrinth.com https://api.mclo.gs http://textures.minecraft.net https://textures.minecraft.net 'self' data: blob:",
-				"font-src": [
-					"'self'",
-					"data:"
-				],
+				"font-src": ["'self'", "data:"],
 				"img-src": "https: 'unsafe-inline' 'self' asset: http://asset.localhost http://textures.minecraft.net blob: data:",
 				"style-src": "'unsafe-inline' 'self'",
 				"script-src": "'self'",

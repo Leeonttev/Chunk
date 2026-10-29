@@ -663,6 +663,9 @@ importers:
       '@tauri-apps/plugin-os':
         specifier: ^2.2.1
         version: 2.3.2
+      '@tauri-apps/plugin-updater':
+        specifier: 2.10.0
+        version: 2.10.0
       '@tauri-apps/plugin-window-state':
         specifier: ^2.2.2
         version: 2.4.1
