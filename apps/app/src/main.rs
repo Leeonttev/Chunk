@@ -164,7 +164,7 @@ fn main() {
     #[cfg(feature = "export-app-events")]
     theseus::export_app_event_bindings(
         std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../app-frontend/src/generated/app-events"),
+            .join("../lemine/src/generated/app-events"),
     )
     .expect("failed to export app event TypeScript bindings");
 

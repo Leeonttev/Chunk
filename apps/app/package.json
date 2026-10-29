@@ -1,5 +1,5 @@
 {
-	"name": "@modrinth/app",
+	"name": "@chunk/app",
 	"scripts": {
 		"tauri": "tauri",
 		"build": "tauri build",

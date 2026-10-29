@@ -32,7 +32,7 @@ function devCsp() {
 export default defineConfig({
 	resolve: {
 		alias: [
-			{ find: '#events', replacement: resolve(projectRootDir, '../app-frontend/src/generated/app-events') },
+			{ find: '#events', replacement: resolve(projectRootDir, 'src/generated/app-events') },
 			{ find: '@', replacement: resolve(projectRootDir, 'src') },
 		],
 	},

@@ -15,7 +15,7 @@
 		"types": ["vite/client"],
 		"paths": {
 			"@/*": ["./src/*"],
-			"#events/*": ["../app-frontend/src/generated/app-events/*"]
+			"#events/*": ["./src/generated/app-events/*"]
 		}
 	},
 	"include": ["src", "env.d.ts"]

@@ -37,7 +37,7 @@ LeMine — личный некоммерческий лаунчер Minecraft д
 | Оболочка Tauri 2 | `apps/app` | Окно, команды-плагины (`plugin:instance|…`, `plugin:auth|…` и т. д.), процесс `theseus_gui` |
 | Rust-ядро `theseus` | `packages/app-lib` | Сборки, установка, запуск игры, аккаунты, скины, логи |
 | **Новый фронтенд** | `apps/lemine` (`@lemine/app`) | Vue 3 + Vite + TypeScript, весь интерфейс LeMine |
-| Старый фронтенд Modrinth | `apps/app-frontend` | **Не используется.** Из него нужна только папка `src/generated/app-events` (алиас `#events`), а ещё он служит справочником по вызовам ядра |
+| Типы событий ядра | `apps/lemine/src/generated/app-events` | Генерируются ts-rs (`export-app-events`), алиас `#events`. Старый фронтенд Modrinth `apps/app-frontend` удалён 2026-10-29; как справочник по вызовам ядра смотреть историю git (коммит `e4303b3` и раньше) |
 | Брендинг | `branding/` | `Vector.svg` — исходный логотип, `app-icon.svg` — иконка приложения |
 
 Связь фронтенда и ядра:
@@ -1140,3 +1140,17 @@ LeMine — личный некоммерческий лаунчер Minecraft д
 - Значки в README показывали «no releases»: GitHub (camo) закэшировал картинки от момента, когда выпуска ещё не было. К адресам значков версии и скачиваний добавлен `&cacheSeconds=1800` — адрес новый, GitHub загрузил свежие значки («ВЕРСИЯ: V0.1.0»).
 - Честный счётчик скачиваний: `total` складывал все файлы выпуска, а `latest.json` скачивается при каждой проверке обновлений, поэтому цифра росла бы от запусков. Установщик в выпуске теперь называется без версии — `Chunk-Setup.exe` (в v0.1.0 файл перезалит, старый `Chunk-Setup-0.1.0.exe` удалён, описание выпуска обновлено). Значок: `github/downloads/Leeonttev/Chunk/latest/Chunk-Setup.exe` — скачивания установщика последнего выпуска (после нового выпуска счёт начинается заново). Кнопка «Скачать» и инструкция в README ведут прямо на `releases/latest/download/Chunk-Setup.exe`. `scripts/release-chunk.mjs` кладёт установщик под этим именем.
 - Блок «Contributors» на странице репозитория какое-то время показывал `claude`, хотя API (`repos/…/contributors`) уже отдаёт только `Leeonttev`. Это кэш GitHub, обновляется сам.
+
+### 2026-10-29 — Из репозитория удалено всё, что не относится к лаунчеру
+- Удалены (вместе с локальными `node_modules`):
+  - `apps/app-frontend`, `apps/app-playground`, `apps/daedalus_client`, `apps/docs`, `apps/frontend`, `apps/labrinth`;
+  - пакеты `api-client`, `assets`, `blog`, `component-derive`, `moderation`, `modrinth-log`, `modrinth-maxmind`, `modrinth-util`, `muralpay`, `neverbounce`, `sqlx-tracing`, `tooling-config`, `ui`, `utils`, `xredis`;
+  - `.agents`, `standards`, `patches`, `.github/{workflows,ISSUE_TEMPLATE,instructions,templates}` — заодно ушёл красный ✕ от CI Modrinth;
+  - `turbo.jsonc` и `apps/app/turbo.jsonc`, `docker-compose.yml`, `.dockerignore`, `.mergify.yml`, `crowdin.yml`, `web-types.json`, `_typos.toml`, `tombi.toml`, `.vscode/i18n-ally-custom-framework.yml`;
+  - все скрипты Modrinth в `scripts/`, кроме `release-chunk.mjs`.
+- Остались: `apps/{app,lemine,installer}` и пакеты, которые реально нужны ядру (по `cargo metadata`): `app-lib`, `daedalus`, `path-util`, `ariadne`, `async-minecraft-ping`, `modrinth-content-management`, `serde-binhum`. Интерфейс не зависит ни от одного `@modrinth/*` пакета.
+- Типы событий перенесены `apps/app-frontend/src/generated/app-events` → `apps/lemine/src/generated/app-events`. Пути обновлены в `vite.config.ts`, `tsconfig.json`, `apps/app/src/main.rs` (export при `--features export-app-events`), `packages/app-lib/src/bin/export_app_events.rs` и исключениях `.gitignore`.
+- `Cargo.toml`: `members` сокращён, убраны path-зависимости удалённых крейтов и профиль `release-labrinth`, `workspace.metadata.name = "chunk"`.
+- Корневой `package.json` переименован в `chunk`. Скрипты `app:dev` / `app:build` вызывают `pnpm --filter @chunk/app …` без turbo (пакет `apps/app` переименован `@modrinth/app` → `@chunk/app`), добавлены `release` и `fix`; из зависимостей остался только prettier. Конфиг prettier — корневой `.prettierrc.json` (копия `apps/lemine/.prettierrc.json`), раньше он брался из `@modrinth/tooling-config`. `pnpm-workspace.yaml` упрощён (`allowBuilds`: `@parcel/watcher`, `esbuild`, `vue-demi`; без патчей). `pnpm-lock.yaml` пересобран (−20 тыс. строк).
+- Корневой `AGENTS.md` переписан под Chunk.
+- Проверка: `vue-tsc`, `vite build`, `cargo check -p theseus_gui -p chunk-installer --features theseus_gui/updater` прошли.
