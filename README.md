@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-	<a href="https://github.com/Leeonttev/Chunk/releases/latest"><img alt="Последняя версия" src="https://img.shields.io/github/v/release/Leeonttev/Chunk?color=24cf78&label=%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F&style=for-the-badge"></a>
-	<a href="https://github.com/Leeonttev/Chunk/releases"><img alt="Скачивания" src="https://img.shields.io/github/downloads/Leeonttev/Chunk/total?color=24cf78&label=%D1%81%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F&style=for-the-badge"></a>
+	<a href="https://github.com/Leeonttev/Chunk/releases/latest"><img alt="Последняя версия" src="https://img.shields.io/github/v/release/Leeonttev/Chunk?color=24cf78&label=%D0%B2%D0%B5%D1%80%D1%81%D0%B8%D1%8F&style=for-the-badge&cacheSeconds=1800"></a>
+	<a href="https://github.com/Leeonttev/Chunk/releases"><img alt="Скачивания" src="https://img.shields.io/github/downloads/Leeonttev/Chunk/total?color=24cf78&label=%D1%81%D0%BA%D0%B0%D1%87%D0%B8%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F&style=for-the-badge&cacheSeconds=1800"></a>
 	<img alt="Windows" src="https://img.shields.io/badge/Windows-10%20%2F%2011-20262a?style=for-the-badge">
 	<a href="COPYING.md"><img alt="Лицензия GPL-3.0" src="https://img.shields.io/badge/%D0%BB%D0%B8%D1%86%D0%B5%D0%BD%D0%B7%D0%B8%D1%8F-GPL--3.0-20262a?style=for-the-badge"></a>
 </p>

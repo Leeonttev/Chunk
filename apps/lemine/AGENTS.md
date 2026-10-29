@@ -1137,3 +1137,4 @@ LeMine — личный некоммерческий лаунчер Minecraft д
 - Выпуск: `gh release create v0.1.0 --latest …` → https://github.com/Leeonttev/Chunk/releases/tag/v0.1.0 (описание на русском, `dist/notes-0.1.0.md`). Проверено: `releases/latest/download/latest.json` отдаёт 200, пакет обновления скачивается (15 391 083 байт).
 - Следующий выпуск: поднять `version` в `apps/lemine/package.json` → `node scripts/release-chunk.mjs "что нового"` → `gh release create v<версия> --latest` со всеми файлами из `dist/release-<версия>/`.
 - Красный ✕ на коммитах на GitHub — это упавшие CI-воркфлоу Modrinth из `.github/workflows` (сайт, labrinth и т. д.). Пока не трогали.
+- Значки в README показывали «no releases»: GitHub (camo) закэшировал картинки от момента, когда выпуска ещё не было. К адресам значков версии и скачиваний добавлен `&cacheSeconds=1800` — адрес новый, GitHub загрузил свежие значки («ВЕРСИЯ: V0.1.0»).
