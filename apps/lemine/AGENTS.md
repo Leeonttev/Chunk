@@ -1116,3 +1116,4 @@ LeMine — личный некоммерческий лаунчер Minecraft д
   - складывает в `dist/release-<версия>/` (папка в `.gitignore`): `Chunk-Setup-<v>.exe`, `Chunk_<v>_x64-setup.exe`, `.sig` и `latest.json` (`platforms.windows-x86_64` с подписью и URL `https://github.com/Leeonttev/Chunk/releases/download/v<v>/Chunk_<v>_x64-setup.exe`).
 - Лаунчер ищет `https://github.com/Leeonttev/Chunk/releases/latest/download/latest.json`, поэтому выпуск должен быть «latest» (не черновик, не pre-release), с тегом `v<версия>`. Репозиторий публичный.
 - Файлы: `apps/app/tauri.conf.json`, `scripts/release-chunk.mjs`, `AGENTS.md`.
+- Коммит `f1c6184` отправлен в `origin/main` (github.com/Leeonttev/Chunk). Вместе с ним ушли автоматически созданные схемы `apps/installer/gen/schemas/*` — это нормально, их генерирует `tauri-build` (как `apps/app/gen`).
