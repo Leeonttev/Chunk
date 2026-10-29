@@ -1,5 +1,6 @@
 // Builds a signed Chunk release into dist/release-<version>/:
-//   Chunk-Setup-<version>.exe       — the custom installer for new users
+//   Chunk-Setup.exe                 — the custom installer for new users; a fixed name keeps
+//                                     /releases/latest/download/Chunk-Setup.exe and the download badge stable
 //   Chunk_<version>_x64-setup.exe   — the NSIS package the in-app updater installs
 //   Chunk_<version>_x64-setup.exe.sig
 //   latest.json                     — the manifest the updater reads from the latest GitHub release
@@ -43,7 +44,7 @@ copyFileSync(join(bundle, nsisName), join(out, nsisName))
 copyFileSync(join(bundle, `${nsisName}.sig`), join(out, `${nsisName}.sig`))
 copyFileSync(
 	join(root, 'target/release/chunk-installer.exe'),
-	join(out, `Chunk-Setup-${version}.exe`),
+	join(out, 'Chunk-Setup.exe'),
 )
 
 const manifest = {
