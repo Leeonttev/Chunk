@@ -17,7 +17,7 @@
 	<rect width="1280" height="360" rx="24" fill="url(#glow)" />
 	<rect y="240" width="1280" height="120" fill="url(#fade)" />
 
-	<g transform="translate(400 92) scale(1.38)">
+	<g transform="translate(282 92) scale(1.38)">
 		<g transform="translate(14 6)">
 			<path d="M50 0 94 25 72 38 50 25 28 38 28 78 50 91 72 78 94 91 50 116 6 91 6 25Z" fill="#20ce79" />
 			<path d="M6 25 50 0 94 25 72 38 50 25 28 38Z" fill="#74eda8" />
@@ -30,6 +30,6 @@
 		</g>
 	</g>
 
-	<text x="600" y="200" fill="#ffffff" font-family="Onest, Montserrat, 'Segoe UI', Arial, sans-serif" font-size="112" font-weight="800" letter-spacing="-3">Chunk</text>
-	<text x="606" y="250" fill="#8e9ba4" font-family="Onest, 'Segoe UI', Arial, sans-serif" font-size="30" font-weight="500">Лаунчер Minecraft без лишнего</text>
+	<text x="500" y="200" fill="#ffffff" font-family="Onest, Montserrat, 'Segoe UI', Arial, sans-serif" font-size="112" font-weight="800" letter-spacing="-3">Chunk</text>
+	<text x="506" y="250" fill="#8e9ba4" font-family="Onest, 'Segoe UI', Arial, sans-serif" font-size="30" font-weight="500">Лаунчер Minecraft без лишнего</text>
 </svg>
