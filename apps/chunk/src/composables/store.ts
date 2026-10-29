@@ -17,14 +17,14 @@ const running = reactive(new Set<string>())
 const launching = reactive(new Set<string>())
 /** Which account each running instance was launched with, so several can run under different nicknames. */
 const runningAs = reactive(new Map<string, Account>())
-const runningAccountIds = useStorage<Record<string, string>>('lemine:running-instance-accounts', {})
+const runningAccountIds = useStorage<Record<string, string>>('chunk:running-instance-accounts', {})
 const installJobs = reactive(new Map<string, InstallJobSnapshot>())
 /**
  * Jobs that already reported a final status. The core can deliver a stale "running" snapshot
  * after the final one (e.g. the reply to a cancel request), which must not bring the job back.
  */
 const finishedJobIds = new Set<string>()
-const selectedInstanceId = useStorage<string | null>('lemine:selected-instance', null)
+const selectedInstanceId = useStorage<string | null>('chunk:selected-instance', null)
 
 const sortedInstances = computed(() =>
 	[...instances.value].sort((a, b) => {

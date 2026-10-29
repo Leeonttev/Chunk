@@ -55,7 +55,7 @@
 	"productName": "Chunk",
 	"version": "../chunk/package.json",
 	"mainBinaryName": "Chunk",
-	"identifier": "LeMine",
+	"identifier": "Chunk",
 	"plugins": {
 		"deep-link": {
 			"desktop": {

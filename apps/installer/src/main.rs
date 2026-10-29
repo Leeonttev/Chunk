@@ -14,11 +14,11 @@ use tauri::{AppHandle, Emitter, Manager};
 
 const PRODUCT: &str = "Chunk";
 const BINARY: &str = "Chunk.exe";
-/// Name the launcher binary had before 0.1.1; removed when installing over an old copy.
-const LEGACY_BINARY: &str = "LeMine.exe";
 const PUBLISHER: &str = "leeonttev";
 /// Folder name the launcher keeps instances, accounts and caches under.
-const DATA_ID: &str = "LeMine";
+const DATA_ID: &str = "Chunk";
+/// Webview storage of the launcher; it shares the install folder with the binary.
+const WEBVIEW_DATA: &str = "EBWebView";
 const VERSION: &str = env!("CHUNK_VERSION");
 const PAYLOAD_SIZE: usize = match usize::from_str_radix(env!("CHUNK_PAYLOAD_SIZE"), 10) {
     Ok(size) => size,
@@ -92,12 +92,10 @@ fn hidden(command: &mut Command) -> &mut Command {
 }
 
 fn launcher_running() -> bool {
-    [BINARY, LEGACY_BINARY].iter().any(|name| {
-        hidden(Command::new("tasklist").args(["/FI", &format!("IMAGENAME eq {name}"), "/NH"]))
-            .output()
-            .map(|output| String::from_utf8_lossy(&output.stdout).contains(name))
-            .unwrap_or(false)
-    })
+    hidden(Command::new("tasklist").args(["/FI", &format!("IMAGENAME eq {BINARY}"), "/NH"]))
+        .output()
+        .map(|output| String::from_utf8_lossy(&output.stdout).contains(BINARY))
+        .unwrap_or(false)
 }
 
 fn create_shortcut(link: &Path, target: &Path) -> Result<(), String> {
@@ -175,7 +173,6 @@ fn do_install(app: &AppHandle, desktop: bool) -> Result<(), String> {
             .map_err(|_| "Не удалось заменить старую версию. Закройте Chunk и повторите.".to_string())?;
     }
     fs::rename(&temp, &target).map_err(|error| error.to_string())?;
-    let _ = fs::remove_file(dir.join(LEGACY_BINARY));
 
     emit(app, 88.0, "Добавляем удаление в Windows");
     let me = std::env::current_exe().map_err(|error| error.to_string())?;
@@ -231,7 +228,7 @@ fn do_uninstall(remove_data: bool) -> Result<(), String> {
     if let Ok(entries) = fs::read_dir(&dir) {
         for entry in entries.flatten() {
             let path = entry.path();
-            if Some(&path) == me.as_ref() {
+            if Some(&path) == me.as_ref() || (!remove_data && entry.file_name() == WEBVIEW_DATA) {
                 continue;
             }
             let _ = if path.is_dir() { fs::remove_dir_all(&path) } else { fs::remove_file(&path) };
@@ -245,11 +242,16 @@ fn do_uninstall(remove_data: bool) -> Result<(), String> {
         }
     }
     // The running uninstaller cannot delete itself; cmd removes the folder once it has exited.
+    // Without /s rmdir keeps a folder that still holds the webview storage.
+    let remove = match me.as_ref().filter(|me| me.parent() == Some(dir.as_path())) {
+        Some(me) if !remove_data => {
+            format!("del /f /q \"{}\" & rmdir \"{}\"", me.display(), dir.display())
+        }
+        _ if !remove_data => format!("rmdir \"{}\"", dir.display()),
+        _ => format!("rmdir /s /q \"{}\"", dir.display()),
+    };
     let mut cleanup = Command::new("cmd");
-    cleanup.args([
-        "/C",
-        &format!("ping 127.0.0.1 -n 3 > nul & rmdir /s /q \"{}\"", dir.display()),
-    ]);
+    cleanup.args(["/C", &format!("ping 127.0.0.1 -n 3 > nul & {remove}")]);
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;

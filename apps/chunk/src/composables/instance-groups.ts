@@ -18,9 +18,9 @@ export const FOLDER_COLORS = [
 	'#d65db1',
 ]
 
-const groups = useStorage<InstanceGroup[]>('lemine:instance-groups', [])
-const assignments = useStorage<Record<string, string>>('lemine:instance-group-assignments', {})
-const collapsedGroups = useStorage<string[]>('lemine:collapsed-instance-groups', [])
+const groups = useStorage<InstanceGroup[]>('chunk:instance-groups', [])
+const assignments = useStorage<Record<string, string>>('chunk:instance-group-assignments', {})
+const collapsedGroups = useStorage<string[]>('chunk:collapsed-instance-groups', [])
 
 function createGroup(name: string, color = FOLDER_COLORS[0]) {
 	const clean = name.trim()

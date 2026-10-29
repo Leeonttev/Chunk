@@ -30,11 +30,11 @@ const LOADER_MODS: Partial<Record<Loader, { name: string; id: string }>> = {
 }
 
 /** Whether the launcher looks for a fix and offers it when a game fails to start. */
-export const autofixEnabled = useStorage('lemine:autofix', true)
+export const autofixEnabled = useStorage('chunk:autofix', true)
 /** Mod set of each instance's last healthy session, as `project@version` (or file name) keys. */
-const healthySets = useStorage<Record<string, string[]>>('lemine:autofix-healthy', {})
+const healthySets = useStorage<Record<string, string[]>>('chunk:autofix-healthy', {})
 /** File names (without `.disabled`) that autofix switched off, per instance, so the UI can say so. */
-export const autofixDisabled = useStorage<Record<string, string[]>>('lemine:autofix-disabled', {})
+export const autofixDisabled = useStorage<Record<string, string[]>>('chunk:autofix-disabled', {})
 
 export type FixStep =
 	| { kind: 'loader'; loaderName: string; from: string | null; to: string }
