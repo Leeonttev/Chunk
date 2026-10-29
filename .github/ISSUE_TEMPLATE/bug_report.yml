@@ -1,0 +1,50 @@
+name: Ошибка
+description: Что-то работает не так, как должно
+title: '[Ошибка] '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: Спасибо, что сообщаете! Чем подробнее описание, тем быстрее получится исправить.
+  - type: textarea
+    id: what
+    attributes:
+      label: Что случилось
+      description: Опишите проблему. Можно приложить скриншот.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Как повторить
+      description: Что нужно сделать, чтобы ошибка появилась снова.
+      placeholder: |
+        1. Открыть сборку…
+        2. Нажать «Играть»…
+        3. Игра вылетает
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Что должно было произойти
+  - type: input
+    id: version
+    attributes:
+      label: Версия Chunk
+      description: Указана в настройках, раздел «О приложении».
+      placeholder: '0.1.0'
+    validations:
+      required: true
+  - type: input
+    id: instance
+    attributes:
+      label: Сборка
+      description: Версия игры и загрузчик, если ошибка связана с игрой.
+      placeholder: '1.21.8, Fabric'
+  - type: textarea
+    id: log
+    attributes:
+      label: Лог
+      description: Если игра вылетает, скопируйте лог из вкладки сборки «Лог игры».
+      render: text
