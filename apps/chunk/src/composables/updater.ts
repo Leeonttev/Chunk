@@ -1,4 +1,5 @@
 import { invoke } from '@tauri-apps/api/core'
+import { openUrl } from '@tauri-apps/plugin-opener'
 import { check, type Update } from '@tauri-apps/plugin-updater'
 import { computed, ref, shallowRef } from 'vue'
 
@@ -6,44 +7,106 @@ import { core } from '@/api/core'
 import { useStore } from '@/composables/store'
 import { updateInstalling } from '@/composables/update-lock'
 
+import packageInfo from '../../package.json'
+
+const REPO = 'Leeonttev/Chunk'
+const SETUP_URL = `https://github.com/${REPO}/releases/latest/download/Chunk-Setup.exe`
+
+/** A newer release this copy cannot install by itself: the player downloads the installer. */
+export interface ManualRelease {
+	version: string
+	notes: string
+}
+
+type Status = 'idle' | 'checking' | 'latest' | 'available' | 'error'
+
 const available = shallowRef<Update | null>(null)
-const checking = ref(false)
+const manualRelease = shallowRef<ManualRelease | null>(null)
+const status = ref<Status>('idle')
+const checkedAt = ref<Date | null>(null)
 const dialogOpen = ref(false)
-const message = ref('')
 const error = ref('')
 const downloaded = ref(0)
 const total = ref<number | undefined>()
 const stage = ref<'download' | 'install'>('download')
 const { instances, running, launching, installJobs } = useStore()
+const checking = computed(() => status.value === 'checking')
+const latestVersion = computed(
+	() => available.value?.version ?? manualRelease.value?.version ?? null,
+)
 const blocked = computed(() => running.size > 0 || launching.size > 0 || installJobs.size > 0)
 const progress = computed(() =>
 	total.value ? Math.min(100, Math.floor((downloaded.value / total.value) * 100)) : null,
 )
 
+function isNewer(candidate: string, current: string) {
+	const parse = (version: string) =>
+		version
+			.replace(/^v/, '')
+			.split(/[.-]/)
+			.slice(0, 3)
+			.map((part) => Number.parseInt(part, 10) || 0)
+	const next = parse(candidate)
+	const now = parse(current)
+	for (let index = 0; index < 3; index++) {
+		if (next[index] !== now[index]) return next[index] > now[index]
+	}
+	return false
+}
+
+async function fetchLatestRelease(): Promise<ManualRelease> {
+	const response = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, {
+		headers: { Accept: 'application/vnd.github+json' },
+		signal: AbortSignal.timeout(15000),
+	})
+	if (!response.ok) throw new Error(`GitHub answered ${response.status}`)
+	const release = (await response.json()) as { tag_name: string; body?: string | null }
+	return { version: release.tag_name.replace(/^v/, ''), notes: release.body ?? '' }
+}
+
+async function checkWithUpdater() {
+	const next = await check({ timeout: 20000 })
+	const previous = available.value
+	available.value = next
+	await previous?.close().catch(() => {})
+	return next !== null
+}
+
+async function checkWithGitHub() {
+	const release = await fetchLatestRelease()
+	manualRelease.value = isNewer(release.version, packageInfo.version) ? release : null
+	return manualRelease.value !== null
+}
+
 async function checkUpdates(manual = false) {
 	if (checking.value || updateInstalling.value) return
-	checking.value = true
+	status.value = 'checking'
 	error.value = ''
-	message.value = ''
 	try {
-		if (!(await invoke<boolean>('are_updates_enabled'))) {
-			if (manual) message.value = 'Обновления доступны в установленной версии Chunk.'
-			return
+		let found: boolean
+		if (await invoke<boolean>('are_updates_enabled')) {
+			try {
+				found = await checkWithUpdater()
+			} catch (cause) {
+				console.warn('Updater check failed, asking GitHub directly', cause)
+				found = await checkWithGitHub()
+			}
+		} else {
+			found = await checkWithGitHub()
 		}
-		const next = await check({ timeout: 20000 })
-		const previous = available.value
-		available.value = next
-		await previous?.close().catch(() => {})
-		if (next) dialogOpen.value = true
-		else if (manual) message.value = 'Установлена последняя версия.'
+		checkedAt.value = new Date()
+		status.value = found ? 'available' : 'latest'
+		if (found && (manual || available.value)) dialogOpen.value = true
 	} catch (cause) {
 		console.warn('Update check failed', cause)
-		if (manual)
-			error.value =
-				'Не удалось проверить обновления. Проверьте интернет; возможно, первый выпуск ещё не опубликован.'
-	} finally {
-		checking.value = false
+		status.value = 'error'
+		error.value = 'Не удалось связаться с GitHub. Проверьте интернет и попробуйте ещё раз.'
 	}
+}
+
+async function downloadInstaller() {
+	await openUrl(SETUP_URL)
+	dialogOpen.value = false
 }
 
 async function installUpdate() {
@@ -87,9 +150,12 @@ async function installUpdate() {
 export function useUpdater() {
 	return {
 		available,
+		manualRelease,
+		latestVersion,
+		status,
+		checkedAt,
 		checking,
 		dialogOpen,
-		message,
 		error,
 		progress,
 		stage,
@@ -97,5 +163,6 @@ export function useUpdater() {
 		updateInstalling,
 		checkUpdates,
 		installUpdate,
+		downloadInstaller,
 	}
 }

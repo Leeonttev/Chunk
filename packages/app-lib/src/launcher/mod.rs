@@ -1206,6 +1206,18 @@ pub async fn launch_minecraft(
         );
     }
 
+    if let Err(error) =
+        crate::api::instance::synced_servers::ensure_featured_servers(
+            &instance_path,
+        )
+        .await
+    {
+        tracing::warn!(
+            "Failed to add featured servers before launching {}: {error}",
+            instance.id
+        );
+    }
+
     crate::api::instance::apply_game_options_launcher_overrides(
         &instance.id,
         mc_set_options,

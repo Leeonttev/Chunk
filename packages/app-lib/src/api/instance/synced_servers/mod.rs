@@ -1,4 +1,5 @@
 mod codec;
+mod featured;
 mod modpack;
 mod operations;
 mod storage;
@@ -7,6 +8,7 @@ mod types;
 const SERVERS_FILE: &str = "servers.dat";
 
 pub(crate) use self::codec::server_data;
+pub(crate) use self::featured::ensure_featured_servers;
 pub(crate) use self::modpack::{
     MODPACK_SERVER_PATHS, capture_modpack_server_override,
 };

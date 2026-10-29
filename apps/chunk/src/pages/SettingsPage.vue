@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useDebounceFn } from '@vueuse/core'
 import {
+	CircleAlert,
+	CircleArrowDown,
+	CircleCheck,
 	Check,
 	Cpu,
 	Download,
@@ -11,6 +14,7 @@ import {
 	Monitor,
 	MonitorPlay,
 	Plus,
+	RefreshCw,
 	Rocket,
 	ShieldCheck,
 	Terminal,
@@ -60,14 +64,46 @@ const JVM_PRESETS = [
 const { accounts, activeAccountId, refreshAccounts } = useStore()
 const section = ref<Section>('accounts')
 const {
-	available,
+	latestVersion,
+	status: updateStatus,
+	checkedAt,
 	checking,
 	dialogOpen,
-	message: updateMessage,
 	error: updateError,
 	updateInstalling,
 	checkUpdates,
 } = useUpdater()
+const updateCard = computed(() => {
+	switch (updateStatus.value) {
+		case 'checking':
+			return {
+				icon: RefreshCw,
+				title: 'Проверяем обновления…',
+				text: 'Спрашиваем GitHub о новой версии',
+			}
+		case 'latest':
+			return { icon: CircleCheck, title: 'У вас последняя версия', text: checkedText.value }
+		case 'available':
+			return {
+				icon: CircleArrowDown,
+				title: `Доступна версия ${latestVersion.value}`,
+				text: `Сейчас установлена ${packageInfo.version}`,
+			}
+		case 'error':
+			return { icon: CircleAlert, title: 'Не удалось проверить', text: updateError.value }
+		default:
+			return {
+				icon: RefreshCw,
+				title: 'Обновления',
+				text: 'Проверьте, не вышла ли новая версия Chunk',
+			}
+	}
+})
+const checkedText = computed(() =>
+	checkedAt.value
+		? `Проверено в ${checkedAt.value.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`
+		: '',
+)
 const settings = ref<AppSettings | null>(null)
 const systemMemory = ref(8192)
 const status = ref<'idle' | 'saving' | 'saved'>('idle')
@@ -431,22 +467,42 @@ async function removeAccount(id: string) {
 					<div v-else-if="section === 'about'" class="about">
 						<AppLogo class="about__logo" />
 						<p class="about__version">Версия {{ packageInfo.version }}</p>
-						<UiButton
-							variant="primary"
-							:disabled="checking || updateInstalling"
-							@click="available ? (dialogOpen = true) : checkUpdates(true)"
+						<article
+							class="card card--row update"
+							:class="`update--${updateStatus}`"
+							role="status"
+							aria-live="polite"
 						>
-							{{
-								checking
-									? 'Проверяем…'
-									: available
-										? `Доступна версия ${available.version}`
-										: 'Проверить обновления'
-							}}
-						</UiButton>
-						<p v-if="updateMessage || updateError" role="status">
-							{{ updateError || updateMessage }}
-						</p>
+							<span class="card__icon update__icon">
+								<component :is="updateCard.icon" :class="{ spin: checking }" />
+							</span>
+							<div class="card__titles">
+								<h3>{{ updateCard.title }}</h3>
+								<p v-if="updateCard.text">{{ updateCard.text }}</p>
+							</div>
+							<UiButton
+								v-if="updateStatus === 'available'"
+								variant="primary"
+								:disabled="updateInstalling"
+								@click="dialogOpen = true"
+							>
+								Обновить
+							</UiButton>
+							<UiButton
+								v-else
+								:variant="updateStatus === 'idle' ? 'primary' : 'secondary'"
+								:disabled="checking || updateInstalling"
+								@click="checkUpdates(true)"
+							>
+								{{
+									checking
+										? 'Проверяем…'
+										: updateStatus === 'idle'
+											? 'Проверить'
+											: 'Проверить снова'
+								}}
+							</UiButton>
+						</article>
 						<div class="about__author">
 							<img :src="authorMark" alt="Логотип leeonttev" width="34" height="22" />
 							<div>
@@ -988,6 +1044,22 @@ async function removeAccount(id: string) {
 
 .about .cards {
 	width: 100%;
+}
+
+.update {
+	width: 100%;
+	max-width: 520px;
+	margin-bottom: 4px;
+}
+
+.update--latest .update__icon {
+	background: rgba(74, 222, 128, 0.14);
+	color: var(--success);
+}
+
+.update--error .update__icon {
+	background: var(--danger-soft);
+	color: var(--danger);
 }
 
 .about__title {
